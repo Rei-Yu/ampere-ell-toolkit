@@ -652,6 +652,19 @@
 
   @media (max-width: 768px) {
 
+    /* Fix pictorial step cards — inline 280px grid must be overridden */
+    div[style*="grid-template-columns:280px 1fr"],
+    div[style*="grid-template-columns: 280px 1fr"] {
+      display: flex !important;
+      flex-direction: column !important;
+    }
+
+    /* Fix sim choice grids on small phones */
+    div[style*="grid-template-columns:1fr 1fr"],
+    div[style*="grid-template-columns: 1fr 1fr"] {
+      grid-template-columns: 1fr !important;
+    }
+
     /* Nav */
     nav { padding: 0 16px; height: 52px; }
     .nav-logo { font-size: 16px; }
@@ -833,12 +846,470 @@
         </div>
       </div>
 
+      <!-- DIVIDER -->
+      <div style="height:3px;background:var(--yellow);margin:0 48px;"></div>
+
+      <!-- EMPATHY SIMULATION -->
+      <div style="padding:0 48px;">
+        <div style="background:var(--navy);padding:28px 32px;">
+          <div style="margin-bottom:20px;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--yellow);margin-bottom:8px;">Try This First</div>
+            <div style="font-size:18px;font-weight:900;color:var(--white);text-transform:uppercase;line-height:1.2;">Step into your student's chair.</div>
+            <div style="font-size:14px;color:rgba(255,255,255,0.7);margin-top:8px;line-height:1.6;">Experience a real classroom worksheet written in Vietnamese — the way a new ELL student experiences every lesson, every day. A timer runs. No translation allowed.</div>
+          </div>
+
+          <!-- SIMULATION WIDGET -->
+          <div style="background:var(--white);border-radius:4px;padding:28px 24px;">
+
+            <!-- SCREEN 0: INTRO -->
+            <div id="sim-s0" class="sim-screen" style="display:flex;flex-direction:column;gap:16px;">
+              <div style="background:#f5f5fa;padding:14px 16px;border-left:3px solid var(--purple);">
+                <div style="font-size:13px;color:var(--navy);line-height:1.6;">The worksheets below use <strong>Vietnamese</strong> — Latin letters that look almost familiar but carry no meaning to most readers. That feeling of almost-but-not-quite understanding is exactly what your student feels.</div>
+              </div>
+              <button onclick="simStart()" style="background:var(--navy);color:var(--yellow);border:none;padding:12px 24px;font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;width:fit-content;">Start Simulation →</button>
+            </div>
+
+            <!-- SCREEN 1: MATH -->
+            <div id="sim-s1" class="sim-screen" style="display:none;flex-direction:column;gap:14px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--purple);">Stage 1 of 3 — Toán Học</span>
+                <div style="display:flex;gap:5px;"><div class="sim-dot sim-dot-active"></div><div class="sim-dot"></div><div class="sim-dot"></div></div>
+              </div>
+              <div style="text-align:center;">
+                <div id="sim-t1" style="display:inline-block;background:#E24B4A;color:white;font-size:28px;font-weight:900;padding:8px 28px;letter-spacing:0.04em;min-width:90px;">20s</div>
+              </div>
+              <div style="height:6px;background:#e8e8ee;border-radius:99px;overflow:hidden;"><div id="sim-f1" style="height:100%;width:100%;background:#E24B4A;border-radius:99px;transition:width 1s linear;"></div></div>
+              <div style="border:1.5px solid #e0e0e8;padding:16px;background:var(--white);">
+                <div style="font-size:10px;color:rgba(27,36,102,0.5);margin-bottom:8px;">Tên: _____________ &nbsp;&nbsp; Ngày: _____________</div>
+                <div style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:10px;">Toán Học — Phiếu Bài Tập Số 4</div>
+                <div style="font-size:13px;color:var(--navy);line-height:1.8;margin-bottom:12px;">Đọc kỹ bài toán sau đây và tính ra kết quả đúng. Dùng bút chì để làm bài. Không được dùng máy tính. Nếu còn thời gian, hãy kiểm tra lại đáp án của mình.</div>
+                <div style="font-size:22px;font-weight:900;color:var(--navy);margin-bottom:8px;">24 ÷ 6 + 8 × 2 = ?</div>
+                <div style="font-size:11px;color:rgba(27,36,102,0.5);">Đáp án: <span style="display:inline-block;width:120px;border-bottom:1px solid #ccc;vertical-align:middle;"></span></div>
+              </div>
+              <div style="font-size:13px;color:var(--navy);font-weight:600;">What do the instructions tell you to do?</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="sim-c1">
+                <button class="sim-choice" onclick="simPick(1,'a')">Copy the equation three times</button>
+                <button class="sim-choice" onclick="simPick(1,'b')">Solve it — no calculator, use a pencil</button>
+                <button class="sim-choice" onclick="simPick(1,'c')">Draw a number line diagram</button>
+                <button class="sim-choice" onclick="simPick(1,'d')">Write the equation out in words</button>
+              </div>
+              <p style="font-size:12px;color:rgba(27,36,102,0.6);margin:0;min-height:16px;" id="sim-h1"></p>
+            </div>
+
+            <!-- SCREEN 2: SCIENCE -->
+            <div id="sim-s2" class="sim-screen" style="display:none;flex-direction:column;gap:14px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--purple);">Stage 2 of 3 — Khoa Học</span>
+                <div style="display:flex;gap:5px;"><div class="sim-dot sim-dot-done"></div><div class="sim-dot sim-dot-active"></div><div class="sim-dot"></div></div>
+              </div>
+              <div style="text-align:center;">
+                <div id="sim-t2" style="display:inline-block;background:#E24B4A;color:white;font-size:28px;font-weight:900;padding:8px 28px;letter-spacing:0.04em;min-width:90px;">25s</div>
+              </div>
+              <div style="height:6px;background:#e8e8ee;border-radius:99px;overflow:hidden;"><div id="sim-f2" style="height:100%;width:100%;background:#E24B4A;border-radius:99px;transition:width 1s linear;"></div></div>
+              <div style="border:1.5px solid #e0e0e8;padding:16px;background:var(--white);position:relative;">
+                <div style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:10px;">Khoa Học — Bài Tập Đọc</div>
+                <div style="font-size:13px;color:var(--navy);line-height:1.9;" id="sim-sci">Mặt trời là một ngôi sao nằm ở trung tâm của hệ mặt trời. Nó được cấu tạo chủ yếu từ khí hydro và heli. Năng lượng của mặt trời được tạo ra thông qua quá trình tổng hợp hạt nhân. Quá trình này xảy ra ở lõi mặt trời, nơi nhiệt độ đạt tới 15 triệu độ. Ánh sáng mặt trời mất 8 phút 20 giây để đến Trái Đất.</div>
+                <div id="sim-blur" style="position:absolute;inset:0;backdrop-filter:blur(0px);transition:backdrop-filter 0.6s;pointer-events:none;border-radius:2px;"></div>
+              </div>
+              <div style="font-size:13px;color:var(--navy);font-weight:600;">What is this passage about?</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="sim-c2">
+                <button class="sim-choice" onclick="simPick(2,'a')">The history of Vietnamese writing</button>
+                <button class="sim-choice" onclick="simPick(2,'b')">The sun and how its light reaches Earth</button>
+                <button class="sim-choice" onclick="simPick(2,'c')">How to measure lab temperature</button>
+                <button class="sim-choice" onclick="simPick(2,'d')">A biography of a Vietnamese scientist</button>
+              </div>
+              <p style="font-size:12px;color:rgba(27,36,102,0.6);margin:0;min-height:16px;" id="sim-h2"></p>
+            </div>
+
+            <!-- SCREEN 3: WORD PROBLEM -->
+            <div id="sim-s3" class="sim-screen" style="display:none;flex-direction:column;gap:14px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--purple);">Stage 3 of 3 — Bài Toán Đố</span>
+                <div style="display:flex;gap:5px;"><div class="sim-dot sim-dot-done"></div><div class="sim-dot sim-dot-done"></div><div class="sim-dot sim-dot-active"></div></div>
+              </div>
+              <div style="text-align:center;">
+                <div id="sim-t3" style="display:inline-block;background:#E24B4A;color:white;font-size:28px;font-weight:900;padding:8px 28px;letter-spacing:0.04em;min-width:90px;">20s</div>
+              </div>
+              <div style="height:6px;background:#e8e8ee;border-radius:99px;overflow:hidden;"><div id="sim-f3" style="height:100%;width:100%;background:#E24B4A;border-radius:99px;transition:width 1s linear;"></div></div>
+              <div style="border:1.5px solid #e0e0e8;padding:16px;background:var(--white);position:relative;">
+                <div style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:10px;">Toán Đố — Đọc và Trả Lời</div>
+                <div style="font-size:13px;color:var(--navy);line-height:1.9;">Tại chợ, An mua 3 quả táo và 5 quả lê. Mỗi quả táo giá 2 đồng và mỗi quả lê giá 1,50 đồng. An trả 20 đồng cho người bán hàng. Hỏi An còn lại bao nhiêu tiền sau khi mua hàng?</div>
+                <div id="sim-red" style="position:absolute;inset:0;background:rgba(226,75,74,0);transition:background 1.2s;pointer-events:none;border-radius:2px;"></div>
+              </div>
+              <div style="font-size:13px;color:var(--navy);font-weight:600;">What is this question asking you to find?</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="sim-c3">
+                <button class="sim-choice" onclick="simPick(3,'a')">Total pieces of fruit purchased</button>
+                <button class="sim-choice" onclick="simPick(3,'b')">How much change is left after buying fruit</button>
+                <button class="sim-choice" onclick="simPick(3,'c')">The weight of the fruit in grams</button>
+                <button class="sim-choice" onclick="simPick(3,'d')">The name of the market</button>
+              </div>
+              <p style="font-size:12px;color:rgba(27,36,102,0.6);margin:0;min-height:16px;" id="sim-h3"></p>
+            </div>
+
+            <!-- SCREEN 4: REFLECTION -->
+            <div id="sim-s4" class="sim-screen" style="display:none;flex-direction:column;gap:16px;">
+              <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--purple);">Simulation Complete</div>
+              <div style="font-size:18px;font-weight:900;color:var(--navy);line-height:1.2;" id="sim-headline"></div>
+              <div style="font-size:13px;color:rgba(27,36,102,0.75);line-height:1.7;" id="sim-body"></div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+                <div style="background:#f5f5fa;padding:12px;"><div style="font-size:22px;font-weight:900;color:var(--navy);" id="sim-score"></div><div style="font-size:11px;color:rgba(27,36,102,0.6);margin-top:2px;">Questions correct</div></div>
+                <div style="background:#f5f5fa;padding:12px;"><div style="font-size:22px;font-weight:900;color:var(--navy);" id="sim-level"></div><div style="font-size:11px;color:rgba(27,36,102,0.6);margin-top:2px;">Equivalent ELL level</div></div>
+                <div style="background:#f5f5fa;padding:12px;"><div style="font-size:22px;font-weight:900;color:var(--navy);" id="sim-time"></div><div style="font-size:11px;color:rgba(27,36,102,0.6);margin-top:2px;">Avg. seconds used</div></div>
+              </div>
+              <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(27,36,102,0.5);margin-bottom:4px;">Tools that would have helped</div>
+              <div id="sim-tools" style="display:flex;flex-direction:column;gap:6px;"></div>
+              <div style="border-left:3px solid var(--yellow);padding-left:12px;">
+                <div style="font-size:13px;font-style:italic;color:rgba(27,36,102,0.7);line-height:1.7;" id="sim-quote"></div>
+              </div>
+              <button onclick="simReset()" style="background:transparent;color:var(--navy);border:1.5px solid var(--navy);padding:10px 20px;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;width:fit-content;">↺ Try Again</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <style>
+        .sim-dot { width:6px;height:6px;border-radius:50%;background:#e0e0e8; }
+        .sim-dot-active { background:var(--navy); }
+        .sim-dot-done { background:rgba(27,36,102,0.35); }
+        .sim-choice { background:#f5f5fa;border:1px solid #e0e0e8;padding:10px 14px;font-size:12px;color:var(--navy);cursor:pointer;text-align:left;border-radius:2px; }
+        .sim-choice:hover { background:white;border-color:#bbb; }
+        .sim-choice.sim-correct { background:#EAF3DE;border-color:#639922;color:#27500A; }
+        .sim-choice.sim-wrong { background:#FCEBEB;border-color:#E24B4A;color:#791F1F; }
+        .sim-choice.sim-faded { opacity:0.3; }
+        .sim-tool-row { display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid #e0e0e8;background:white;border-radius:2px; }
+        .sim-tool-name { font-size:12px;font-weight:700;color:var(--navy);display:block; }
+        .sim-tool-desc { font-size:11px;color:rgba(27,36,102,0.65);display:block;margin-top:2px; }
+      </style>
+
+      <script>
+        // ── COMPREHENSION SLIDER ──
+        const COMP_PARA = [
+          { text: "Water ", key: true },
+          { text: "moves", key: false },
+          { text: " ", key: true },
+          { text: "through", key: false },
+          { text: " ", key: true },
+          { text: "the", key: true },
+          { text: " ", key: true },
+          { text: "environment", key: false },
+          { text: " ", key: true },
+          { text: "in", key: true },
+          { text: " ", key: true },
+          { text: "a", key: true },
+          { text: " ", key: true },
+          { text: "continuous", key: false },
+          { text: " ", key: true },
+          { text: "cycle.", key: false },
+          { text: " ", key: true },
+          { text: "The", key: true },
+          { text: " ", key: true },
+          { text: "sun", key: true },
+          { text: " ", key: true },
+          { text: "heats", key: false },
+          { text: " ", key: true },
+          { text: "water", key: true },
+          { text: " ", key: true },
+          { text: "in", key: true },
+          { text: " ", key: true },
+          { text: "oceans,", key: false },
+          { text: " ", key: true },
+          { text: "lakes,", key: false },
+          { text: " ", key: true },
+          { text: "and", key: true },
+          { text: " ", key: true },
+          { text: "rivers,", key: false },
+          { text: " ", key: true },
+          { text: "causing", key: false },
+          { text: " ", key: true },
+          { text: "it", key: true },
+          { text: " ", key: true },
+          { text: "to", key: true },
+          { text: " ", key: true },
+          { text: "evaporate", key: false },
+          { text: " ", key: true },
+          { text: "into", key: false },
+          { text: " ", key: true },
+          { text: "water", key: true },
+          { text: " ", key: true },
+          { text: "vapour.", key: false },
+          { text: " ", key: true },
+          { text: "This", key: true },
+          { text: " ", key: true },
+          { text: "vapour", key: false },
+          { text: " ", key: true },
+          { text: "rises", key: false },
+          { text: " ", key: true },
+          { text: "into", key: false },
+          { text: " ", key: true },
+          { text: "the", key: true },
+          { text: " ", key: true },
+          { text: "atmosphere,", key: false },
+          { text: " ", key: true },
+          { text: "where", key: false },
+          { text: " ", key: true },
+          { text: "it", key: true },
+          { text: " ", key: true },
+          { text: "cools", key: false },
+          { text: " ", key: true },
+          { text: "and", key: true },
+          { text: " ", key: true },
+          { text: "condenses", key: false },
+          { text: " ", key: true },
+          { text: "into", key: false },
+          { text: " ", key: true },
+          { text: "clouds.", key: false },
+          { text: " ", key: true },
+          { text: "Eventually,", key: false },
+          { text: " ", key: true },
+          { text: "water", key: true },
+          { text: " ", key: true },
+          { text: "falls", key: false },
+          { text: " ", key: true },
+          { text: "back", key: true },
+          { text: " ", key: true },
+          { text: "to", key: true },
+          { text: " ", key: true },
+          { text: "Earth", key: true },
+          { text: " ", key: true },
+          { text: "as", key: true },
+          { text: " ", key: true },
+          { text: "precipitation", key: false },
+          { text: " — ", key: true },
+          { text: "rain,", key: false },
+          { text: " ", key: true },
+          { text: "snow,", key: false },
+          { text: " ", key: true },
+          { text: "or", key: true },
+          { text: " ", key: true },
+          { text: "hail", key: false },
+          { text: " — ", key: true },
+          { text: "and", key: true },
+          { text: " ", key: true },
+          { text: "the", key: true },
+          { text: " ", key: true },
+          { text: "cycle", key: false },
+          { text: " ", key: true },
+          { text: "begins", key: false },
+          { text: " ", key: true },
+          { text: "again.", key: false }
+        ];
+
+        const SYMBOLS = ['◆','▲','●','◉','▼','◈','⬟','◇','▸','◀','◼','◻','⬡','⬢','▣'];
+
+        function toSymbols(word) {
+          return word.split('').map(ch => {
+            if (/[a-zA-Z]/.test(ch)) return SYMBOLS[ch.toLowerCase().charCodeAt(0) % SYMBOLS.length];
+            return ch;
+          }).join('');
+        }
+
+        // Each token gets a "readability threshold" — the level at which it starts degrading.
+        // key=true (common words) degrade later; key=false (academic words) degrade earlier.
+        // very short key words (the, a, and) stay readable longest.
+        function getThreshold(token) {
+          const w = token.text.replace(/[^a-zA-Z]/g,'').toLowerCase();
+          const anchors = ['the','a','an','and','or','to','in','it','as','is','at','of','on','by'];
+          if (anchors.includes(w)) return 1.2;   // survive almost to level 1
+          if (token.key) return 2.5;             // common content words survive to ~level 2.5
+          return 5.0;                            // academic words begin degrading right from level 5
+        }
+
+        function renderComp(level) {
+          // level is now a float between 1.0 and 5.0
+          return COMP_PARA.map(token => {
+            const t = token.text;
+            if (/^\s*$/.test(t) || t === ' — ') return t;
+
+            const threshold = getThreshold(token);
+            // Wider transition zone — 2.5 units wide so degradation starts early and finishes late
+            const transitionWidth = 2.5;
+
+            if (level >= threshold) {
+              // Fully readable
+              return t;
+            }
+
+            if (level <= threshold - transitionWidth) {
+              // Fully degraded
+              const depthFade = Math.max(0.08, 0.15 - (threshold - level) * 0.02);
+              return '<span style="color:rgba(27,36,102,'+depthFade.toFixed(2)+');filter:blur(5px);transition:filter 0.05s,color 0.05s;">' + toSymbols(t) + '</span>';
+            }
+
+            // Smooth transition zone
+            const progress = 1 - ((level - (threshold - transitionWidth)) / transitionWidth);
+            const blurPx = (progress * 5).toFixed(2);
+            const colorAlpha = Math.max(0.08, 1 - progress * 0.92).toFixed(3);
+
+            if (progress < 0.12) {
+              return '<span style="color:rgba(27,36,102,'+colorAlpha+');transition:color 0.05s;">'+t+'</span>';
+            }
+
+            const blended = t.split('').map((ch, i) => {
+              if (!/[a-zA-Z]/.test(ch)) return ch;
+              const flipThreshold = 1 - progress;
+              const charNorm = (i / Math.max(t.length - 1, 1));
+              const shouldFlip = (charNorm + (i % 2) * 0.3) > flipThreshold * 1.2;
+              return shouldFlip ? SYMBOLS[ch.toLowerCase().charCodeAt(0) % SYMBOLS.length] : ch;
+            }).join('');
+
+            return '<span style="color:rgba(27,36,102,'+colorAlpha+');filter:blur('+blurPx+'px);transition:filter 0.05s,color 0.05s;">' + blended + '</span>';
+
+          }).join('');
+        }
+
+        const COMP_META = {
+          5: { label:'Level 5 — Bridging', desc:'Reads the full paragraph with near-complete understanding. May pause on "precipitation" or "condenses" but can infer from context.', bg:'#1B2466' },
+          4: { label:'Level 4 — Consolidating', desc:'Understands the general topic but academic vocabulary like "evaporate," "atmosphere," and "condenses" become noise — replaced by symbols.', bg:'#5B5EA6' },
+          3: { label:'Level 3 — Expanding', desc:'Only short, common words remain readable. The passage has a topic but the meaning is fragmented. Scientific process words are completely lost.', bg:'#5B5EA6' },
+          2: { label:'Level 2 — Developing', desc:'Only the most basic connecting words survive. The passage feels like a wall of unknown symbols. This student cannot complete the task without support.', bg:'#a0001a' },
+          1: { label:'Level 1 — Beginning', desc:'Complete symbol substitution. Every content word is inaccessible. This is the daily reading experience without translation tools.', bg:'#E24B4A' }
+        };
+
+        function updateComp(val) {
+          const v = parseFloat(val);
+          document.getElementById('comp-sentence').innerHTML = renderComp(v);
+          // Interpolate label continuously between levels
+          const lo = Math.max(1, Math.floor(v));
+          const hi = Math.min(5, Math.ceil(v));
+          const metaLo = COMP_META[lo];
+          const metaHi = COMP_META[hi];
+          const t = v - lo;
+          // Use the closer level's label
+          const meta = t < 0.5 ? metaLo : metaHi;
+          const badge = document.getElementById('comp-level-badge');
+          badge.textContent = meta.label;
+          badge.style.background = meta.bg;
+          document.getElementById('comp-desc').textContent = meta.desc;
+        }
+
+        document.addEventListener('DOMContentLoaded', ()=>updateComp(5));
+
+        // ── SIMULATION ──
+        const SIM_CORRECT = {1:'b',2:'b',3:'b'};
+        const SIM_DUR = {1:20,2:25,3:20};
+        let simAnswers={}, simIntervals={}, simTLeft={}, simTotal=0;
+
+        function simShow(id) {
+          document.querySelectorAll('.sim-screen').forEach(s=>{s.style.display='none';});
+          document.getElementById(id).style.display='flex';
+          document.getElementById(id).style.flexDirection='column';
+          document.getElementById(id).style.gap='14px';
+        }
+
+        function simStart() { simShow('sim-s1'); simRunTimer(1); }
+
+        function simRunTimer(stage) {
+          simTLeft[stage] = SIM_DUR[stage];
+          const fill = document.getElementById('sim-f'+stage);
+          const label = document.getElementById('sim-t'+stage);
+          simIntervals[stage] = setInterval(()=>{
+            simTLeft[stage]--;
+            fill.style.width = Math.round(simTLeft[stage]/SIM_DUR[stage]*100)+'%';
+            label.textContent = simTLeft[stage]+'s';
+            if(stage===2 && simTLeft[stage]<=12){
+              const b=((12-simTLeft[stage])/12*5).toFixed(1);
+              document.getElementById('sim-blur').style.backdropFilter='blur('+b+'px)';
+            }
+            if(stage===3 && simTLeft[stage]<=14){
+              const a=((14-simTLeft[stage])/14*0.09).toFixed(3);
+              document.getElementById('sim-red').style.background='rgba(226,75,74,'+a+')';
+            }
+            if(simTLeft[stage]<=0){
+              clearInterval(simIntervals[stage]);
+              simTotal+=SIM_DUR[stage];
+              if(!simAnswers[stage]){simAnswers[stage]='X';simLock(stage);simHint(stage,'timeout');setTimeout(()=>simNext(stage),1800);}
+            }
+          },1000);
+        }
+
+        function simPick(stage,choice){
+          if(simAnswers[stage]) return;
+          clearInterval(simIntervals[stage]);
+          simTotal+=SIM_DUR[stage]-simTLeft[stage];
+          simAnswers[stage]=choice;
+          simLock(stage,choice);
+          simHint(stage,choice===SIM_CORRECT[stage]?'correct':'wrong');
+          setTimeout(()=>simNext(stage),choice===SIM_CORRECT[stage]?1100:1800);
+        }
+
+        function simLock(stage,selected){
+          document.querySelectorAll('#sim-c'+stage+' .sim-choice').forEach((btn,i)=>{
+            btn.onclick=null;
+            const l=['a','b','c','d'][i];
+            if(l===SIM_CORRECT[stage]) btn.classList.add('sim-correct');
+            else if(l===selected) btn.classList.add('sim-wrong');
+            else btn.classList.add('sim-faded');
+          });
+        }
+
+        function simHint(stage,type){
+          const el=document.getElementById('sim-h'+stage);
+          if(!el) return;
+          if(type==='correct') el.textContent='Correct — context clues helped. Your student rarely has even those.';
+          else if(type==='wrong') el.textContent='Incorrect. Without language support, this is the likely outcome.';
+          else el.textContent="Time's up. Your student feels this pressure in every class, every day.";
+        }
+
+        function simNext(stage){ stage<3?(simShow('sim-s'+(stage+1)),simRunTimer(stage+1)):simReflect(); }
+
+        function simReflect(){
+          const score=[1,2,3].filter(s=>simAnswers[s]===SIM_CORRECT[s]).length;
+          const avg=Math.round(simTotal/3);
+          document.getElementById('sim-score').textContent=score+'/3';
+          document.getElementById('sim-time').textContent=avg+'s';
+          const data=[
+            {level:'Level 1',h:'Complete linguistic isolation.',b:'You experienced what a Level 1 student faces — text that carries zero meaning. Without tools, this student sits silent not from lack of ability, but lack of support.',q:'"Zero correct is not failure. It is what happens when a capable person is given no language support. Your student is that capable person."',tools:[0,1,2]},
+            {level:'Level 1–2',h:'Most meaning was lost.',b:'You caught an occasional anchor — a number, a near-cognate. This is the daily experience of a Beginning ELL student. Most meaning slips through regardless.',q:'"Imagine doing this in Math, then Science, then English — back to back, with no break and no one who speaks your language."',tools:[0,1,2]},
+            {level:'Level 2–3',h:'You found signals. Much was still lost.',b:'You identified the topic of some passages but probably guessed. A Developing ELL student scans for anchors and exhausts enormous energy just to keep up.',q:'"Getting two right doesn\'t mean understanding. It means surviving. There\'s a difference — and your student knows it."',tools:[0,1]},
+            {level:'Level 3',h:'Strong instincts — but gaps remained.',b:'You succeeded largely through context clues. A Level 3 student does the same, while also managing new vocabulary, social pressure, and cultural adjustment.',q:'"Even at Level 3, the cognitive load of learning in a second language is relentless. A little translation support goes a very long way."',tools:[1,2]}
+          ];
+          const d=data[Math.min(score,3)];
+          document.getElementById('sim-level').textContent=d.level;
+          document.getElementById('sim-headline').textContent=d.h;
+          document.getElementById('sim-body').textContent=d.b;
+          document.getElementById('sim-quote').textContent=d.q;
+          const toolDefs=[
+            {name:'🎙️ Voice — Google Translate',desc:'Speak instructions in English. Student hears them in Vietnamese instantly.'},
+            {name:'📄 Documents — Google Translate',desc:'Translate worksheets so students can follow along in class and take a copy home in their language.'},
+            {name:'✉️ Emails — DeepL',desc:'Write home in natural Vietnamese that feels respectful to families.'}
+          ];
+          const box=document.getElementById('sim-tools');
+          box.innerHTML='';
+          d.tools.forEach(i=>{
+            const t=toolDefs[i];
+            box.innerHTML+='<div class="sim-tool-row"><div><span class="sim-tool-name">'+t.name+'</span><span class="sim-tool-desc">'+t.desc+'</span></div></div>';
+          });
+          simShow('sim-s4');
+          document.getElementById('sim-s4').style.gap='16px';
+        }
+
+        function simReset(){
+          simAnswers={}; simTotal=0;
+          Object.values(simIntervals).forEach(clearInterval); simIntervals={}; simTLeft={};
+          [1,2,3].forEach(s=>{
+            const f=document.getElementById('sim-f'+s); if(f){f.style.width='100%';f.style.background='#E24B4A';}
+            const t=document.getElementById('sim-t'+s); if(t) t.textContent=SIM_DUR[s]+'s';
+            const h=document.getElementById('sim-h'+s); if(h) h.textContent='';
+            document.querySelectorAll('#sim-c'+s+' .sim-choice').forEach((btn,i)=>{
+              btn.className='sim-choice';
+              const l=['a','b','c','d'][i];
+              btn.onclick=()=>simPick(s,l);
+            });
+          });
+          const bl=document.getElementById('sim-blur'); if(bl) bl.style.backdropFilter='blur(0px)';
+          const rd=document.getElementById('sim-red'); if(rd) rd.style.background='rgba(226,75,74,0)';
+          simShow('sim-s0');
+        }
+      </script>
+
       <div class="print-btn-wrap">
         <button class="print-btn" onclick="printCheatSheet()">
           <span class="print-btn-icon">🖨️</span>
           Print Desk Cheat Sheet
         </button>
       </div>
+
       <div class="home-grid">
         <div class="home-tile" onclick="showPanel('tool-voice', null)">
           <span class="tile-icon">🎙️</span>
@@ -1739,6 +2210,29 @@
         <p class="hero-sub">Use the BC ELL Quick Scale to identify where your student is — then match your tech use and classroom strategy accordingly.</p>
       </div>
 
+      <!-- COMPREHENSION SIMULATOR -->
+      <div style="background:var(--navy);padding:28px 48px;">
+        <div style="margin-bottom:20px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--yellow);margin-bottom:8px;">Comprehension Simulator</div>
+          <div style="font-size:18px;font-weight:900;color:var(--white);text-transform:uppercase;line-height:1.2;">What does your student actually understand?</div>
+          <div style="font-size:14px;color:rgba(255,255,255,0.7);margin-top:8px;line-height:1.6;">Move the slider from Level 5 to Level 1 to see how the same classroom paragraph degrades — showing what partial language comprehension actually looks like at each ELL level.</div>
+        </div>
+        <div style="background:var(--white);padding:24px;">
+          <div style="background:#f0f0f6;padding:18px 20px;min-height:80px;display:flex;align-items:center;margin-bottom:20px;">
+            <div id="comp-sentence" style="font-size:15px;color:var(--navy);line-height:1.9;letter-spacing:0.01em;width:100%;"></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+            <span style="font-size:11px;font-weight:700;color:#E24B4A;white-space:nowrap;text-align:center;">Level 1<br><span style="font-weight:400;font-size:10px;color:rgba(27,36,102,0.5);">Beginning</span></span>
+            <input type="range" id="comp-slider" min="1" max="5" value="5" step="any" style="flex:1;accent-color:var(--navy);" oninput="updateComp(this.value)">
+            <span style="font-size:11px;font-weight:700;color:var(--navy);white-space:nowrap;text-align:center;">Level 5<br><span style="font-weight:400;font-size:10px;color:rgba(27,36,102,0.5);">Bridging</span></span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+            <span id="comp-level-badge" style="display:inline-block;color:var(--yellow);font-size:12px;font-weight:700;padding:6px 20px;letter-spacing:0.08em;text-transform:uppercase;"></span>
+            <div id="comp-desc" style="font-size:13px;color:rgba(27,36,102,0.65);text-align:center;line-height:1.6;max-width:560px;min-height:40px;"></div>
+          </div>
+        </div>
+      </div>
+
       <div class="ell-area">
 
         <!-- QUICK SCALE -->
@@ -1753,7 +2247,7 @@
               </div>
               <div class="ell-level-name">Beginning</div>
               <div class="ell-level-desc">Needs direct translation and heavy visual scaffolding. Minimal English production.</div>
-              <span class="ell-tech-badge tech-high">Tech Use: High</span>
+              
               <span class="ell-expand-hint">↓ Tap for examples & tool guidance</span>
               <div class="ell-dropdown" id="ell-drop-1">
                 <div class="ell-dropdown-item">
@@ -1786,7 +2280,7 @@
               </div>
               <div class="ell-level-name">Developing</div>
               <div class="ell-level-desc">Uses simple everyday English. Relies on familiar vocabulary and routines.</div>
-              <span class="ell-tech-badge tech-high">Tech Use: High / Moderate</span>
+              
               <span class="ell-expand-hint">↓ Tap for examples & tool guidance</span>
               <div class="ell-dropdown" id="ell-drop-2">
                 <div class="ell-dropdown-item">
@@ -1819,7 +2313,7 @@
               </div>
               <div class="ell-level-name">Expanding</div>
               <div class="ell-level-desc">Needs support with academic vocabulary. Uses context clues to fill gaps.</div>
-              <span class="ell-tech-badge tech-mod">Tech Use: Moderate</span>
+              
               <span class="ell-expand-hint">↓ Tap for examples & tool guidance</span>
               <div class="ell-dropdown" id="ell-drop-3">
                 <div class="ell-dropdown-item">
@@ -1852,7 +2346,7 @@
               </div>
               <div class="ell-level-name">Consolidating</div>
               <div class="ell-level-desc">Proficient in conversation, but struggles with dense academic jargon and complex texts.</div>
-              <span class="ell-tech-badge tech-low">Tech Use: Low — simplify English</span>
+              
               <span class="ell-expand-hint">↓ Tap for examples & tool guidance</span>
               <div class="ell-dropdown" id="ell-drop-4">
                 <div class="ell-dropdown-item">
@@ -1885,7 +2379,7 @@
               </div>
               <div class="ell-level-name">Bridging</div>
               <div class="ell-level-desc">Approaching grade-level proficiency. Minimal translation support required.</div>
-              <span class="ell-tech-badge tech-bridge">Approaching Grade Level</span>
+              
               <span class="ell-expand-hint">↓ Tap for examples & tool guidance</span>
               <div class="ell-dropdown" id="ell-drop-5">
                 <div class="ell-dropdown-item">
