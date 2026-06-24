@@ -1,0 +1,2289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ampere — Educator Translation Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --purple: #5B5EA6;
+    --yellow: #F5C400;
+    --navy:   #1B2466;
+    --white:  #FFFFFF;
+  }
+
+  body { font-family: 'Inter', sans-serif; background: #f0f0f4; color: var(--navy); min-height: 100vh; }
+
+  /* ── NAV ── */
+  nav {
+    background: var(--yellow);
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-logo { font-size: 22px; font-weight: 900; color: var(--navy); letter-spacing: -0.02em; text-transform: uppercase; }
+  .nav-logo span { color: var(--purple); }
+  .nav-tabs { display: flex; gap: 4px; }
+  .nav-tab {
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    transition: background 0.15s;
+  }
+  .nav-tab:hover { background: rgba(27,36,102,0.1); }
+  .nav-tab.active { background: var(--navy); color: var(--yellow); }
+
+  /* ── LAYOUT ── */
+  .shell { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 56px); }
+
+  /* ── SIDEBAR ── */
+  aside {
+    background: var(--navy);
+    padding: 32px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .sidebar-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--yellow);
+    padding: 0 24px 8px;
+    margin-top: 16px;
+  }
+  .sidebar-label:first-child { margin-top: 0; }
+  .sidebar-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 24px;
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.7);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .sidebar-btn:hover { background: rgba(255,255,255,0.07); color: var(--white); }
+  .sidebar-btn.active { background: var(--purple); color: var(--white); }
+  .sidebar-btn.active::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--yellow);
+  }
+  .sidebar-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.08);
+  }
+  .sidebar-btn.active .sidebar-icon { background: rgba(245,196,0,0.2); }
+  .sidebar-meta { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 1px; display: block; }
+
+  /* ── MAIN CONTENT ── */
+  main { overflow-y: auto; }
+
+  /* ── PANELS ── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── HERO STRIP ── */
+  .hero-strip {
+    background: var(--purple);
+    padding: 40px 48px;
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--yellow);
+    margin-bottom: 10px;
+  }
+  .hero-title {
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--white);
+    text-transform: uppercase;
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+  .hero-title span { color: var(--yellow); }
+  .hero-sub { font-size: 15px; color: rgba(255,255,255,0.85); max-width: 860px; }
+
+  /* ── STAT STRIP ── */
+  .stat-strip {
+    background: var(--yellow);
+    padding: 16px 48px;
+    display: flex;
+    gap: 48px;
+    align-items: center;
+  }
+  .stat { display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .stat-num { font-size: 22px; font-weight: 900; color: var(--navy); line-height: 1; }
+  .stat-label { font-size: 11px; font-weight: 600; color: var(--navy); opacity: 0.7; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  /* ── TOOL CARDS GRID ── */
+  .cards-area { padding: 32px 48px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+  .tool-card {
+    background: var(--white);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.15s;
+    display: flex;
+    flex-direction: column;
+  }
+  .tool-card:hover { border-color: var(--purple); transform: translateY(-2px); }
+  .tool-card.active { border-color: var(--yellow); }
+
+  .card-header {
+    padding: 20px 24px 16px;
+    border-bottom: 2px solid #f0f0f4;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .card-badge {
+    background: var(--yellow);
+    color: var(--navy);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .card-num { font-size: 36px; font-weight: 900; color: var(--purple); line-height: 1; }
+  .card-title { font-size: 17px; font-weight: 900; color: var(--navy); text-transform: uppercase; line-height: 1.2; margin-top: 8px; }
+  .card-url {
+    font-size: 11px;
+    font-family: monospace;
+    color: var(--white);
+    background: var(--purple);
+    padding: 3px 8px;
+    margin-top: 6px;
+    display: inline-block;
+  }
+
+  .card-body { padding: 20px 24px; flex: 1; display: flex; flex-direction: column; gap: 12px; }
+  .step { display: flex; gap: 12px; align-items: flex-start; }
+  .step-n {
+    min-width: 22px; height: 22px;
+    background: var(--navy); color: var(--white);
+    font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .step-t { font-size: 13px; color: var(--navy); line-height: 1.5; }
+
+  .card-warn {
+    margin: 0 24px 24px;
+    padding: 12px 14px;
+    font-size: 12px;
+    line-height: 1.5;
+    font-weight: 500;
+  }
+  .warn-y { background: var(--yellow); color: var(--navy); }
+  .warn-n { background: var(--navy); color: var(--white); }
+  .warn-wl { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+  .warn-y .warn-wl { color: var(--navy); }
+  .warn-n .warn-wl { color: var(--yellow); }
+
+  .card-action {
+    margin: 0 24px 20px;
+    display: flex;
+    gap: 8px;
+  }
+  .btn-open {
+    background: var(--purple);
+    color: var(--white);
+    border: none;
+    padding: 10px 18px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s;
+  }
+  .btn-open:hover { background: var(--navy); }
+  .btn-open svg { width: 12px; height: 12px; }
+
+  /* ── MATRIX PANEL ── */
+  .matrix-hero {
+    background: var(--purple);
+    padding: 40px 48px;
+  }
+  .matrix-area { padding: 32px 48px; }
+  .matrix-table { width: 100%; border-collapse: collapse; }
+  .matrix-table th {
+    background: var(--navy);
+    color: var(--yellow);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 14px 20px;
+    text-align: left;
+  }
+  .matrix-row { cursor: pointer; }
+  .matrix-row td {
+    background: var(--white);
+    padding: 16px 20px;
+    font-size: 14px;
+    border-bottom: 2px solid #f0f0f4;
+    vertical-align: top;
+    line-height: 1.55;
+    transition: background 0.12s;
+  }
+  .matrix-row:hover td { background: #f5f5fa; }
+  .matrix-row.open td { background: #eeeef8; }
+  .tool-pill {
+    display: inline-block;
+    background: var(--purple);
+    color: var(--white);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    letter-spacing: 0.04em;
+  }
+  .bottleneck-text { font-weight: 700; }
+  .expand-icon { float: right; font-size: 18px; color: var(--purple); font-weight: 900; transition: transform 0.2s; }
+  .matrix-row.open .expand-icon { transform: rotate(45deg); }
+
+  .fix-row td {
+    background: var(--navy);
+    color: var(--white);
+    padding: 16px 20px 20px;
+    font-size: 14px;
+    line-height: 1.6;
+    border-bottom: 3px solid var(--yellow);
+  }
+  .fix-row { display: none; }
+  .fix-row.open { display: table-row; }
+  .fix-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--yellow); display: block; margin-bottom: 6px; }
+
+  /* ── GREETING ── */
+  .greeting {
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+    min-width: 260px;
+    text-align: right;
+    transition: opacity 0.3s ease;
+  }
+  .greeting.fade { opacity: 0; }
+  .greeting-lang {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--navy);
+    opacity: 0.6;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-left: 8px;
+  }
+  .reassurance-box {
+    background: var(--yellow);
+    border-left: 6px solid var(--navy);
+    padding: 18px 24px;
+    margin: 20px 48px 0;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .reassurance-icon { font-size: 28px; flex-shrink: 0; line-height: 1; }
+  .reassurance-title {
+    font-size: 13px; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--navy); margin-bottom: 6px;
+  }
+  .reassurance-text { font-size: 14px; color: var(--navy); line-height: 1.65; }
+
+  .print-btn-wrap { padding: 20px 48px 0; }
+  .print-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--white);
+    color: var(--navy);
+    border: 2px solid var(--navy);
+    padding: 12px 24px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .print-btn:hover { background: var(--navy); color: var(--yellow); }
+  .print-btn-icon { font-size: 15px; }
+
+  /* ── PRINT STYLES ── */
+  @media print {
+    body { background: white; padding: 0; }
+    .screen-only { display: none; }
+    .page { box-shadow: none; max-width: 100%; }
+  }
+
+  /* Embedded cheat sheet — hidden until print triggered */
+  #cheatsheet-embed {
+    display: none;
+    font-family: 'Inter', sans-serif;
+  }
+  /* cheat sheet scoped styles */
+  #cheatsheet-embed .cs-page { background: white; width: 100%; border: 3px dashed #1B2466; padding: 8px; }
+  #cheatsheet-embed .cs-header { background: #1B2466; padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; }
+  #cheatsheet-embed .cs-logo { font-size: 18px; font-weight: 900; color: #F5C400; }
+  #cheatsheet-embed .cs-title { font-size: 14px; font-weight: 900; color: white; text-transform: uppercase; text-align: right; }
+  #cheatsheet-embed .cs-reassure { background: #F5C400; padding: 12px 24px; display: flex; gap: 12px; align-items: flex-start; }
+  #cheatsheet-embed .cs-reassure-text { font-size: 12px; font-weight: 600; color: #1B2466; line-height: 1.5; }
+  #cheatsheet-embed .cs-tools { display: grid; grid-template-columns: repeat(3,1fr); border-top: 3px solid #1B2466; }
+  #cheatsheet-embed .cs-col { padding: 16px; border-right: 2px solid #1B2466; }
+  #cheatsheet-embed .cs-col:last-child { border-right: none; }
+  #cheatsheet-embed .cs-num { font-size: 28px; font-weight: 900; color: #F5C400; line-height: 1; }
+  #cheatsheet-embed .cs-tool-name { font-size: 12px; font-weight: 900; text-transform: uppercase; color: #1B2466; margin: 4px 0 2px; }
+  #cheatsheet-embed .cs-url { font-size: 10px; font-family: monospace; background: #5B5EA6; color: white; padding: 2px 6px; display: inline-block; margin-bottom: 10px; }
+  #cheatsheet-embed .cs-step { display: flex; gap: 8px; margin-bottom: 6px; font-size: 11px; color: #1B2466; line-height: 1.45; }
+  #cheatsheet-embed .cs-sn { min-width: 18px; height: 18px; background: #1B2466; color: white; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  #cheatsheet-embed .cs-warn-y { background: #F5C400; padding: 8px 10px; font-size: 10px; color: #1B2466; line-height: 1.4; margin-top: 8px; }
+  #cheatsheet-embed .cs-warn-n { background: #1B2466; padding: 8px 10px; font-size: 10px; color: white; line-height: 1.4; margin-top: 8px; }
+  #cheatsheet-embed .cs-warn-label { font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; display: block; margin-bottom: 3px; }
+  #cheatsheet-embed .cs-privacy { background: #5B5EA6; padding: 12px 24px; display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; border-top: 3px solid #1B2466; }
+  #cheatsheet-embed .cs-ps { background: white; padding: 10px; }
+  #cheatsheet-embed .cs-ps-num { font-size: 18px; font-weight: 900; color: #F5C400; }
+  #cheatsheet-embed .cs-ps-title { font-size: 10px; font-weight: 900; text-transform: uppercase; color: #1B2466; }
+  #cheatsheet-embed .cs-ps-desc { font-size: 10px; color: #1B2466; line-height: 1.4; margin-top: 3px; }
+  #cheatsheet-embed .cs-ps-ex { font-size: 10px; font-family: monospace; background: #f0f0f4; padding: 3px 6px; margin-top: 4px; }
+  #cheatsheet-embed .cs-footer { background: #1B2466; padding: 8px 24px; display: flex; justify-content: space-between; align-items: center; }
+  #cheatsheet-embed .cs-footer-l { font-size: 10px; color: rgba(255,255,255,0.5); }
+  #cheatsheet-embed .cs-footer-r { font-size: 10px; font-weight: 700; color: #F5C400; }
+
+  @media print {
+    nav, aside, .shell, footer, #cheatsheet-embed ~ * { display: none !important; }
+    #cheatsheet-embed { display: block !important; }
+    body { background: white; margin: 0; padding: 0; }
+  }
+  .ell-hero { background: var(--purple); padding: 40px 48px; }
+  .ell-area { padding: 32px 48px; display: flex; flex-direction: column; gap: 24px; }
+
+  .ell-section-title {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--purple); margin-bottom: 16px;
+  }
+
+  /* Quick Scale grid */
+  .ell-scale-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    border: 2px solid var(--yellow);
+  }
+  .ell-scale-card {
+    padding: 20px 18px;
+    border-right: 2px solid var(--yellow);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: var(--white);
+    cursor: default;
+    transition: background 0.15s;
+  }
+  .ell-scale-card:last-child { border-right: none; }
+  .ell-scale-card:hover { background: #f5f5fa; }
+  .ell-level-num {
+    font-size: 28px; font-weight: 900; color: var(--yellow); line-height: 1;
+  }
+  .ell-level-name {
+    font-size: 13px; font-weight: 900; text-transform: uppercase;
+    color: var(--navy); line-height: 1.2;
+  }
+  .ell-level-desc {
+    font-size: 12px; color: rgba(27,36,102,0.75); line-height: 1.5; flex: 1;
+  }
+  .ell-tech-badge {
+    display: inline-block;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 4px 8px; margin-top: 4px;
+  }
+  .tech-high   { background: var(--purple); color: var(--white); }
+  .tech-mod    { background: var(--navy);   color: var(--yellow); }
+  .tech-low    { background: #f0f0f4;       color: var(--navy); }
+  .tech-bridge { background: var(--yellow); color: var(--navy); }
+
+  /* Checklist */
+  .ell-checklist {
+    background: var(--white);
+    border: 2px solid var(--navy);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .ell-check-item {
+    padding: 24px 24px;
+    border-right: 2px solid var(--navy);
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .ell-check-item:last-child { border-right: none; }
+  .ell-check-icon { font-size: 26px; }
+  .ell-check-title {
+    font-size: 15px; font-weight: 900; text-transform: uppercase;
+    color: var(--navy); line-height: 1.2;
+  }
+  .ell-check-sub {
+    font-size: 12px; font-weight: 700; color: var(--purple);
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .ell-check-desc { font-size: 13px; color: rgba(27,36,102,0.8); line-height: 1.55; }
+  .ell-check-example {
+    font-size: 12px; font-family: monospace;
+    background: #f0f0f4; padding: 8px 10px; color: var(--navy); line-height: 1.5;
+  }
+  .ell-check-example .ex-bad  { color: #a0001a; text-decoration: line-through; }
+  .ell-check-example .ex-good { color: var(--navy); font-weight: 700; }
+
+  .ell-note {
+    background: var(--yellow); padding: 16px 24px;
+    font-size: 13px; font-weight: 500; color: var(--navy); line-height: 1.6;
+  }
+  .ell-note strong { font-weight: 900; }
+  .privacy-hero { background: var(--purple); padding: 40px 48px; }
+  .privacy-area { padding: 32px 48px; display: flex; flex-direction: column; gap: 16px; }
+  .privacy-card { background: var(--white); padding: 28px 32px; border-left: 5px solid var(--yellow); }
+  .privacy-card.danger { border-left-color: var(--purple); }
+  .privacy-card h3 { font-size: 15px; font-weight: 900; text-transform: uppercase; color: var(--navy); margin-bottom: 10px; }
+  .privacy-card p { font-size: 14px; color: var(--navy); line-height: 1.65; }
+  .redact-demo {
+    background: #f0f0f4;
+    padding: 20px 24px;
+    margin-top: 16px;
+    font-size: 13px;
+    line-height: 1.7;
+    font-family: monospace;
+    color: var(--navy);
+  }
+  .redact-demo .before { color: #c0392b; text-decoration: line-through; }
+  .redact-demo .after  { color: #1B2466; font-weight: 700; }
+
+  /* ── HOME PANEL ── */
+  .home-hero { background: var(--purple); padding: 48px 48px 40px; }
+  .home-grid { padding: 32px 48px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .home-tile {
+    background: var(--white);
+    padding: 28px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.15s, transform 0.15s;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .home-tile:hover { border-color: var(--yellow); transform: translateY(-2px); }
+  .tile-icon { font-size: 28px; }
+  .tile-num { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--purple); }
+  .tile-title { font-size: 18px; font-weight: 900; text-transform: uppercase; color: var(--navy); line-height: 1.2; }
+  .tile-desc { font-size: 13px; color: rgba(27,36,102,0.7); line-height: 1.5; }
+  .tile-arrow { font-size: 20px; font-weight: 900; color: var(--yellow); margin-top: auto; }
+  .home-tile-wide {
+    grid-column: span 2;
+    background: var(--navy);
+    padding: 28px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .home-tile-wide:hover { border-color: var(--yellow); }
+  .home-tile-wide .tile-title { color: var(--white); }
+  .home-tile-wide .tile-desc { color: rgba(255,255,255,0.6); }
+  .home-tile-wide .tile-arrow { color: var(--yellow); font-size: 24px; }
+
+  /* ── HAMBURGER ── */
+  .hamburger {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 5px;
+    padding: 4px;
+  }
+  .hamburger span {
+    display: block;
+    width: 24px;
+    height: 3px;
+    background: var(--navy);
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .mobile-nav-drawer {
+    display: none;
+    background: var(--navy);
+    padding: 8px 0;
+    position: sticky;
+    top: 56px;
+    z-index: 99;
+  }
+  .mobile-nav-drawer.open { display: block; }
+  .mobile-nav-item {
+    display: block;
+    width: 100%;
+    padding: 14px 24px;
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.8);
+    font-size: 15px;
+    font-weight: 700;
+    text-align: left;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-left: 3px solid transparent;
+  }
+  .mobile-nav-item.active { color: var(--yellow); border-left-color: var(--yellow); background: rgba(255,255,255,0.05); }
+  .mobile-nav-item:hover { background: rgba(255,255,255,0.07); color: white; }
+
+  /* ── RESPONSIVE BREAKPOINTS ── */
+  /* Footer accordion */
+  footer .open { display: block !important; }
+
+  /* Matrix group headers */
+  .matrix-group-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--navy);
+    color: var(--white);
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0;
+  }
+  .matrix-group-icon { font-size: 16px; }
+  .matrix-group-url {
+    font-size: 11px;
+    font-family: monospace;
+    font-weight: 400;
+    color: var(--yellow);
+    margin-left: auto;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  /* ELL dropdown */
+  .ell-scale-card { cursor: pointer; }
+  .ell-dropdown {
+    display: none;
+    margin-top: 10px;
+    border-top: 2px solid var(--navy);
+    padding-top: 10px;
+  }
+  .ell-dropdown.open { display: block; }
+  .ell-dropdown-item {
+    padding: 8px 0;
+    border-bottom: 1px solid #e8e8ee;
+    font-size: 12px;
+    color: var(--navy);
+    line-height: 1.5;
+  }
+  .ell-dropdown-item:last-child { border-bottom: none; }
+  .ell-dropdown-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--purple);
+    margin-bottom: 3px;
+    display: block;
+  }
+  .ell-expand-hint {
+    font-size: 10px;
+    color: var(--purple);
+    font-weight: 600;
+    margin-top: 6px;
+    display: block;
+    letter-spacing: 0.04em;
+  }
+  .ell-toggle-icon {
+    float: right;
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--purple);
+    transition: transform 0.2s;
+  }
+  .ell-scale-card.open .ell-toggle-icon { transform: rotate(45deg); }
+
+  @media (max-width: 768px) {
+
+    /* Nav */
+    nav { padding: 0 16px; height: 52px; }
+    .nav-logo { font-size: 16px; }
+    .nav-tabs { display: none; }
+    .hamburger { display: flex; }
+
+    /* Hide sidebar, go full width */
+    .shell { grid-template-columns: 1fr; }
+    aside { display: none; }
+
+    /* Hero — stack headline and greeting */
+    .home-hero { padding: 28px 20px !important; }
+    .home-hero > div:first-child > h1 { font-size: 26px !important; }
+    div[style*="grid-template-columns: 1fr 340px"] {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 20px !important;
+    }
+    div[style*="grid-template-columns: 1fr 340px"] > div:last-child {
+      height: auto !important;
+      padding: 20px !important;
+    }
+    #greeting-text { font-size: 28px !important; }
+
+    /* Hero strip (tools/matrix/privacy panels) */
+    .hero-strip { padding: 28px 20px; }
+    .hero-title { font-size: 24px !important; }
+    .hero-sub { font-size: 14px; }
+
+    /* Stat strip */
+    .stat-strip { padding: 12px 20px; gap: 24px; flex-wrap: wrap; }
+
+    /* Tool cards — single column */
+    .cards-area { grid-template-columns: 1fr; padding: 20px; gap: 16px; }
+
+    /* Home grid — single column */
+    .home-grid { grid-template-columns: 1fr; padding: 20px; }
+    .home-tile-wide { grid-column: span 1; }
+
+    /* Matrix table — hide summary column, simplify */
+    .matrix-area { padding: 16px 20px; }
+    .matrix-table th:nth-child(3),
+    .matrix-table td:nth-child(3) { display: none; }
+    .matrix-table th:nth-child(1) { width: 28%; }
+    .matrix-table th:nth-child(2) { width: 64%; }
+    .matrix-table th:nth-child(4) { width: 8%; }
+    .matrix-table td { font-size: 13px; padding: 12px 14px; }
+    .fix-row td { padding: 14px 16px; font-size: 13px; }
+
+    /* Privacy & ELL panels */
+    .privacy-area { padding: 20px; }
+    .privacy-card { padding: 20px; }
+    .matrix-hero { padding: 28px 20px; }
+    .ell-area { padding: 20px; }
+    .ell-scale-grid { grid-template-columns: 1fr 1fr; }
+    .ell-checklist { grid-template-columns: 1fr; }
+    .ell-check-item { border-right: none !important; border-bottom: 2px solid var(--navy); }
+    .ell-check-item:last-child { border-bottom: none; }
+
+    /* Reassurance box */
+    .reassurance-box { margin: 16px 20px 0; }
+    .print-btn-wrap { padding: 16px 20px 0; }
+    .print-btn { font-size: 13px; padding: 12px 20px; }
+  }
+
+  @media (max-width: 480px) {
+    .nav-logo { font-size: 14px; }
+    .hero-title { font-size: 20px !important; }
+    .ell-scale-grid { grid-template-columns: 1fr; }
+    .stat-strip { gap: 16px; }
+    .stat-num { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo"><span>Ampere</span> Educator Hub</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPanel('home', this)">Home</button>
+    <button class="nav-tab" onclick="showPanel('land', this)">Land Acknowledgement</button>
+    <button class="nav-tab" onclick="showPanel('ell', this)">ELL Learners</button>
+    <button class="nav-tab" onclick="showPanel('tool-voice', this)">🎙️ Voice</button>
+    <button class="nav-tab" onclick="showPanel('tool-docs', this)">📄 Documents</button>
+    <button class="nav-tab" onclick="showPanel('tool-email', this)">✉️ Emails</button>
+    <button class="nav-tab" onclick="showPanel('matrix', this)">Troubleshooting</button>
+    <button class="nav-tab" onclick="showPanel('privacy', this)">Privacy Guide</button>
+  </div>
+  <button class="hamburger" onclick="toggleDrawer()" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE NAV DRAWER -->
+<div class="mobile-nav-drawer" id="mobile-drawer">
+  <button class="mobile-nav-item active" onclick="showPanel('home', null); closeDrawer(this)">🏠 Home</button>
+  <button class="mobile-nav-item" onclick="showPanel('land', null); closeDrawer(this)">🪶 Land Acknowledgement</button>
+  <button class="mobile-nav-item" onclick="showPanel('ell', null); closeDrawer(this)">🎓 ELL Learners</button>
+  <button class="mobile-nav-item" onclick="showPanel('tool-voice', null); closeDrawer(this)">🎙️ Voice</button>
+  <button class="mobile-nav-item" onclick="showPanel('tool-docs', null); closeDrawer(this)">📄 Documents</button>
+  <button class="mobile-nav-item" onclick="showPanel('tool-email', null); closeDrawer(this)">✉️ Emails</button>
+  <button class="mobile-nav-item" onclick="showPanel('matrix', null); closeDrawer(this)">⚡ Troubleshooting</button>
+  <button class="mobile-nav-item" onclick="showPanel('privacy', null); closeDrawer(this)">✗ Privacy Guide</button>
+</div>
+
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside>
+    <div class="sidebar-label">Quick Access</div>
+    <button class="sidebar-btn active" onclick="showPanel('home', null, this)">
+      <span class="sidebar-icon">🏠</span>
+      <span>Overview<span class="sidebar-meta">Start here</span></span>
+    </button>
+    <button class="sidebar-btn" onclick="showPanel('land', null, this)">
+      <span class="sidebar-icon">🪶</span>
+      <span>Land Acknowledgement<span class="sidebar-meta">Indigenous territories</span></span>
+    </button>
+    <button class="sidebar-btn" onclick="showPanel('ell', null, this)">
+      <span class="sidebar-icon">🎓</span>
+      <span>ELL Learner Guide<span class="sidebar-meta">BC Ministry Standards</span></span>
+    </button>
+
+    <div class="sidebar-label">Translation Tools</div>
+    <button class="sidebar-btn" onclick="showPanel('tool-voice', null, this)">
+      <span class="sidebar-icon">🎙️</span>
+      <span>Voice<span class="sidebar-meta">translate.google.com</span></span>
+    </button>
+    <button class="sidebar-btn" onclick="showPanel('tool-docs', null, this)">
+      <span class="sidebar-icon">📄</span>
+      <span>Documents<span class="sidebar-meta">translate.google.com</span></span>
+    </button>
+    <button class="sidebar-btn" onclick="showPanel('tool-email', null, this)">
+      <span class="sidebar-icon">✉️</span>
+      <span>Emails<span class="sidebar-meta">deepl.com</span></span>
+    </button>
+
+    <div class="sidebar-label">Reference</div>
+    <button class="sidebar-btn" onclick="showPanel('matrix', null, this)">
+      <span class="sidebar-icon">🔧</span>
+      <span>Troubleshooting<span class="sidebar-meta">8 common issues</span></span>
+    </button>
+    <button class="sidebar-btn" onclick="showPanel('privacy', null, this)">
+      <span class="sidebar-icon">✗</span>
+      <span>Privacy Guide<span class="sidebar-meta">FIPPA compliance</span></span>
+    </button>
+    <button class="sidebar-btn" onclick="document.querySelector('footer').scrollIntoView({behavior:'smooth'}); setTimeout(()=>{const c=document.getElementById('ai-disclosure-content'); const icon=document.querySelector('.toggle-icon'); if(c.style.display!=='block'){c.style.display='block'; icon.textContent='−';}}, 400);">
+      <span class="sidebar-icon">📋</span>
+      <span>AI Use Disclosure<span class="sidebar-meta">Transparency statement</span></span>
+    </button>
+  </aside>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- HOME PANEL -->
+    <div class="panel active" id="panel-home">
+      <div class="home-hero" style="display:grid; grid-template-columns: 1fr 340px; gap: 32px; align-items: center;">
+        <div>
+          <p class="hero-eyebrow">Ampere Educator Resource</p>
+          <h1 class="hero-title" style="font-size:38px;">Every family deserves to hear<br><span>from you in their language.</span></h1>
+          <p class="hero-sub">Three free, browser-based tools — no accounts, no downloads, no IT ticket required.</p>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; background:var(--yellow); border: 4px solid var(--yellow); padding: 24px 20px; text-align:center; height: 100%;">
+          <div style="font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:rgba(27,36,102,0.55); margin-bottom:14px;">Good morning in every language</div>
+          <div id="greeting-display" style="transition: opacity 0.3s ease;">
+            <div id="greeting-text" style="font-size:clamp(18px, 3vw, 36px); font-weight:900; color:var(--navy); line-height:1.1; letter-spacing:-0.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;">Good morning</div>
+            <div id="greeting-lang" style="font-size:12px; font-weight:600; color:rgba(27,36,102,0.5); letter-spacing:0.1em; text-transform:uppercase; margin-top:10px;">English</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reassurance-box">
+        <span class="reassurance-icon">✅</span>
+        <div>
+          <div class="reassurance-title">Important Note — You cannot break anything here</div>
+          <div class="reassurance-text">These tools are completely safe to use. They will not alter or delete your original files. As long as you replace student names with <strong>[Student]</strong> before translating, you are 100% compliant with all school privacy rules. Feel free to explore without fear.</div>
+        </div>
+      </div>
+
+      <div class="print-btn-wrap">
+        <button class="print-btn" onclick="printCheatSheet()">
+          <span class="print-btn-icon">🖨️</span>
+          Print Desk Cheat Sheet
+        </button>
+      </div>
+      <div class="home-grid">
+        <div class="home-tile" onclick="showPanel('tool-voice', null)">
+          <span class="tile-icon">🎙️</span>
+          <span class="tile-num">Tool 01 — Voice</span>
+          <div class="tile-title">Live desk conversation</div>
+          <div class="tile-desc">Speak in English, your student reads in their language — and they can speak back. Real-time, at your desk.</div>
+          <span class="tile-arrow">→</span>
+        </div>
+        <div class="home-tile" onclick="showPanel('tool-docs', null)">
+          <span class="tile-icon">📄</span>
+          <span class="tile-num">Tool 02 — Worksheets</span>
+          <div class="tile-title">Document translation</div>
+          <div class="tile-desc">Upload PDFs and Word docs to get a translated, editable copy in minutes.</div>
+          <span class="tile-arrow">→</span>
+        </div>
+        <div class="home-tile" onclick="showPanel('tool-email', null)">
+          <span class="tile-icon">✉️</span>
+          <span class="tile-num">Tool 03 — Emails</span>
+          <div class="tile-title">Parent communication</div>
+          <div class="tile-desc">DeepL delivers nuanced, natural-sounding translations for home communication.</div>
+          <span class="tile-arrow">→</span>
+        </div>
+        <div class="home-tile-wide" onclick="showPanel('matrix', null)">
+          <div>
+            <div class="tile-num" style="color:rgba(255,255,255,0.5)">Quick Reference</div>
+            <div class="tile-title">Something not working? →</div>
+            <div class="tile-desc">Dead microphone, 10 MB errors, literal translation mistakes — all fixes in one place.</div>
+          </div>
+          <span class="tile-arrow" style="font-size:32px;">🔧</span>
+        </div>
+        <div class="home-tile-wide" onclick="showPanel('ell', null)" style="background:var(--purple);">
+          <div>
+            <div class="tile-num" style="color:rgba(255,255,255,0.5)">BC Ministry Standards</div>
+            <div class="tile-title">Understanding your ELL learner →</div>
+            <div class="tile-desc">Quick Scale levels 1–5, tech use recommendations, and the non-tech backup checklist.</div>
+          </div>
+          <span class="tile-arrow" style="font-size:32px;">🎓</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- LAND ACKNOWLEDGEMENT PANEL -->
+    <div class="panel" id="panel-land">
+      <div style="background:var(--purple);padding:40px 48px;">
+        <p class="hero-eyebrow">Land Acknowledgement</p>
+        <h1 class="hero-title">This digital resource was created <span>on Indigenous land.</span></h1>
+        <p class="hero-sub">Schools, classrooms, and digital spaces do not exist outside of place.</p>
+      </div>
+      <div style="padding:32px 48px;display:flex;flex-direction:column;gap:16px;">
+
+        <div style="background:var(--white);border:2px solid var(--navy);padding:28px 32px;border-left:6px solid var(--yellow);">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--purple);margin-bottom:14px;">Acknowledgement</div>
+          <p style="font-size:15px;color:var(--navy);line-height:1.85;">This tool was created on the traditional, ancestral, and unceded territories of Indigenous Peoples across Turtle Island. The land on which educators teach, learn, and connect belongs to the nations who have cared for it since time immemorial.</p>
+          <p style="font-size:15px;color:var(--navy);line-height:1.85;margin-top:14px;">The inclusion of Cree and Inuktitut greetings in this dashboard is offered as a small gesture of respect — not a substitute for the deeper work of relationship, reciprocity, and reconciliation that educators and institutions must continue to pursue.</p>
+        </div>
+
+        <div style="background:var(--navy);padding:24px 32px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--yellow);margin-bottom:14px;">What you can do as an educator</div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;gap:12px;align-items:flex-start;">
+              <span style="color:var(--yellow);font-weight:900;font-size:16px;flex-shrink:0;">→</span>
+              <span style="font-size:14px;color:rgba(255,255,255,0.9);line-height:1.6;">Learn the specific land acknowledgement for your school and share it with students and families as part of everyday classroom practice.</span>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start;">
+              <span style="color:var(--yellow);font-weight:900;font-size:16px;flex-shrink:0;">→</span>
+              <span style="font-size:14px;color:rgba(255,255,255,0.9);line-height:1.6;">Acknowledge the land not just at assemblies, but in daily routines — including when introducing digital tools and resources.</span>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start;">
+              <span style="color:var(--yellow);font-weight:900;font-size:16px;flex-shrink:0;">→</span>
+              <span style="font-size:14px;color:rgba(255,255,255,0.9);line-height:1.6;">Use the "Good morning" greetings in this dashboard as a conversation starter with students about language, place, and the diversity of the people in your classroom.</span>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start;">
+              <span style="color:var(--yellow);font-weight:900;font-size:16px;flex-shrink:0;">→</span>
+              <span style="font-size:14px;color:rgba(255,255,255,0.9);line-height:1.6;">Go beyond acknowledgement — seek out relationships with local Indigenous knowledge keepers, Elders, and community members in your school district.</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:var(--yellow);padding:20px 28px;display:flex;gap:16px;align-items:center;">
+          <div>
+            <div style="font-size:13px;font-weight:900;color:var(--navy);text-transform:uppercase;margin-bottom:4px;">Not sure whose land your school is on?</div>
+            <div style="font-size:14px;color:var(--navy);line-height:1.6;">Visit <a href="https://native-land.ca" target="_blank" style="color:var(--navy);font-weight:700;text-decoration:underline;">native-land.ca</a> — a free, educator-friendly interactive map of Indigenous territories, languages, and treaties across Canada and beyond.</div>
+          </div>
+        </div>
+
+        <div style="background:var(--white);border:2px solid var(--navy);padding:24px 32px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;">Indigenous languages in this dashboard</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div style="padding:16px;background:#f5f5fa;border-left:4px solid var(--purple);">
+              <div style="font-size:13px;font-weight:900;color:var(--navy);margin-bottom:2px;">Cree</div>
+              <div style="font-size:13px;color:var(--purple);margin-bottom:8px;">ᐙᐸᓐ ᒦᓇ (Wâpan mîna)</div>
+              <div style="font-size:13px;color:rgba(27,36,102,0.8);line-height:1.6;">The most widely spoken Indigenous language in Canada, part of the Algonquian family. Spoken across the Prairies, Ontario, and Quebec in several dialects including Plains, Woods, and Swampy Cree.</div>
+            </div>
+            <div style="padding:16px;background:#f5f5fa;border-left:4px solid var(--purple);">
+              <div style="font-size:13px;font-weight:900;color:var(--navy);margin-bottom:2px;">Inuktitut</div>
+              <div style="font-size:13px;color:var(--purple);margin-bottom:8px;">ᐅᒻᓚᐊᒥ (Ublaami)</div>
+              <div style="font-size:13px;color:rgba(27,36,102,0.8);line-height:1.6;">The primary language of the Inuit people, and an official language in Nunavut and the Northwest Territories. One of Canada's most geographically widespread Indigenous languages.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- DEDICATED: VOICE PANEL -->
+    <div class="panel" id="panel-tool-voice">
+      <div class="hero-strip">
+        <p class="hero-eyebrow">Tool 01 — Voice</p>
+        <h1 class="hero-title">Talk with your student <span>in real time.</span></h1>
+        <p class="hero-sub">Speak in English. Your student reads in their language. They speak back. No typing needed.</p>
+      </div>
+      <div class="stat-strip">
+        <div class="stat"><span class="stat-num">🌐</span><span class="stat-label">100+ languages</span></div>
+        <div class="stat"><span class="stat-num">0</span><span class="stat-label">Account needed</span></div>
+        <div class="stat"><span class="stat-num">Free</span><span class="stat-label">Always</span></div>
+        <div class="stat"><span class="stat-num">⚡</span><span class="stat-label">Instant translation</span></div>
+      </div>
+      <div style="padding:32px 48px;display:flex;flex-direction:column;gap:16px;">
+
+        <!-- BEST USED FOR -->
+        <div style="background:var(--white);border:2px solid var(--yellow);padding:24px 32px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;">Best used for</div>
+          <div style="font-size:14px;color:var(--navy);line-height:1.8;">Welcoming a new student on their first day · Explaining a task or activity · Giving directions · Quick check-ins on how a student is feeling · Any moment where you need to communicate something right now and typing isn't practical.</div>
+        </div>
+
+        <!-- PICTORIAL STEPS -->
+        <div style="background:var(--white);border:2px solid var(--yellow);padding:28px 32px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--purple);margin-bottom:24px;">How to set it up — follow the pictures</div>
+          <div style="display:flex;flex-direction:column;gap:0;">
+
+            <!-- STEP 1 -->
+            <div style="display:grid;grid-template-columns:280px 1fr;gap:0;border:2px solid #e8e8ee;margin-bottom:12px;">
+              <svg viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+                <rect width="280" height="160" fill="#f5f5fa"/>
+                <!-- browser chrome -->
+                <rect width="280" height="28" fill="#d0d0da"/>
+                <circle cx="16" cy="14" r="5" fill="#f0957a"/>
+                <circle cx="30" cy="14" r="5" fill="#f5c400"/>
+                <circle cx="44" cy="14" r="5" fill="#7bc67a"/>
+                <rect x="56" y="7" width="160" height="14" rx="4" fill="white"/>
+                <text x="136" y="17" font-size="8" fill="#5B5EA6" text-anchor="middle" font-family="monospace">translate.google.com</text>
+                <!-- page -->
+                <rect x="8" y="36" width="264" height="116" rx="4" fill="white"/>
+                <!-- Google Translate logo area -->
+                <text x="140" y="62" font-size="11" font-weight="bold" fill="#1B2466" text-anchor="middle">Google Translate</text>
+                <!-- two panels -->
+                <rect x="16" y="72" width="108" height="68" rx="3" fill="#f0f0f4" stroke="#1B2466" stroke-width="1.5"/>
+                <text x="70" y="88" font-size="9" font-weight="bold" fill="#1B2466" text-anchor="middle">English</text>
+                <rect x="20" y="92" width="100" height="1" fill="#ccc"/>
+                <text x="70" y="116" font-size="8" fill="#aaa" text-anchor="middle">Type or speak here...</text>
+                <rect x="156" y="72" width="108" height="68" rx="3" fill="#f0f0f4" stroke="#5B5EA6" stroke-width="2"/>
+                <text x="210" y="88" font-size="9" font-weight="bold" fill="#5B5EA6" text-anchor="middle">← Click to set language</text>
+                <rect x="160" y="92" width="100" height="1" fill="#ccc"/>
+                <text x="210" y="116" font-size="8" fill="#aaa" text-anchor="middle">Translation appears here</text>
+                <!-- swap button -->
+                <rect x="124" y="96" width="32" height="20" rx="10" fill="#F5C400"/>
+                <text x="140" y="110" font-size="12" text-anchor="middle" fill="#1B2466" font-weight="bold">⇄</text>
+                <!-- arrow pointing to right panel -->
+                <text x="210" y="150" font-size="8" fill="#5B5EA6" text-anchor="middle" font-weight="bold">↑ Click here and type their language</text>
+              </svg>
+              <div style="padding:20px 24px;display:flex;flex-direction:column;justify-content:center;gap:8px;background:white;">
+                <div style="background:var(--navy);color:var(--yellow);font-size:12px;font-weight:900;padding:4px 12px;display:inline-block;width:fit-content;">STEP 1</div>
+                <div style="font-size:16px;font-weight:700;color:var(--navy);">Open the website</div>
+                <div style="font-size:14px;color:var(--navy);line-height:1.7;">Open your internet browser and go to <strong>translate.google.com</strong>. You will see two panels side by side. Click the language name on the <strong>right panel</strong> and type your student's home language to select it. The left panel should already say <strong>English</strong>.</div>
+              </div>
+            </div>
+
+            <!-- STEP 2 -->
+            <div style="display:grid;grid-template-columns:280px 1fr;gap:0;border:2px solid #e8e8ee;margin-bottom:12px;">
+              <svg viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+                <rect width="280" height="160" fill="#f5f5fa"/>
+                <rect x="8" y="8" width="120" height="144" rx="4" fill="white" stroke="#1B2466" stroke-width="2"/>
+                <text x="68" y="28" font-size="9" font-weight="bold" fill="#1B2466" text-anchor="middle">English (YOUR SIDE)</text>
+                <rect x="12" y="34" width="112" height="1" fill="#e0e0e8"/>
+                <text x="68" y="60" font-size="8" fill="#aaa" text-anchor="middle">Speak here in English</text>
+                <!-- big mic button -->
+                <circle cx="68" cy="108" r="28" fill="#1B2466"/>
+                <text x="68" y="116" font-size="26" text-anchor="middle" fill="white">🎙️</text>
+                <text x="68" y="146" font-size="8" font-weight="bold" fill="#1B2466" text-anchor="middle">← Click this mic</text>
+                <!-- permission popup -->
+                <rect x="148" y="20" width="124" height="60" rx="6" fill="#F5C400" stroke="#1B2466" stroke-width="1.5"/>
+                <text x="210" y="40" font-size="8" font-weight="bold" fill="#1B2466" text-anchor="middle">Browser asks:</text>
+                <text x="210" y="54" font-size="8" fill="#1B2466" text-anchor="middle">"Allow microphone?"</text>
+                <rect x="158" y="62" width="44" height="14" rx="4" fill="#1B2466"/>
+                <text x="180" y="72" font-size="8" font-weight="bold" fill="white" text-anchor="middle">Allow ✓</text>
+                <rect x="210" y="62" width="44" height="14" rx="4" fill="#ddd"/>
+                <text x="232" y="72" font-size="8" fill="#888" text-anchor="middle">Block</text>
+                <text x="210" y="100" font-size="8" fill="#1B2466" text-anchor="middle" font-weight="bold">↑ Always click Allow</text>
+              </svg>
+              <div style="padding:20px 24px;display:flex;flex-direction:column;justify-content:center;gap:8px;background:white;">
+                <div style="background:var(--navy);color:var(--yellow);font-size:12px;font-weight:900;padding:4px 12px;display:inline-block;width:fit-content;">STEP 2</div>
+                <div style="font-size:16px;font-weight:700;color:var(--navy);">Click the microphone and speak</div>
+                <div style="font-size:14px;color:var(--navy);line-height:1.7;">Click the <strong>🎙️ microphone button</strong> on the left (English) side. Your browser may pop up a message asking permission — click <strong>Allow</strong>. Then speak your message clearly in English. The translation will appear on the right side automatically.</div>
+              </div>
+            </div>
+
+            <!-- STEP 3 -->
+            <div style="display:grid;grid-template-columns:280px 1fr;gap:0;border:2px solid #e8e8ee;margin-bottom:12px;">
+              <svg viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+                <rect width="280" height="160" fill="#f5f5fa"/>
+                <!-- left panel: English with translation -->
+                <rect x="8" y="8" width="120" height="100" rx="4" fill="white" stroke="#1B2466" stroke-width="1.5"/>
+                <text x="68" y="26" font-size="9" font-weight="bold" fill="#1B2466" text-anchor="middle">English (YOUR SIDE)</text>
+                <rect x="12" y="30" width="112" height="1" fill="#e0e0e8"/>
+                <text x="68" y="52" font-size="8" fill="#1B2466" text-anchor="middle">"Good morning, how</text>
+                <text x="68" y="64" font-size="8" fill="#1B2466" text-anchor="middle">are you today?"</text>
+                <!-- right panel: translated -->
+                <rect x="152" y="8" width="120" height="100" rx="4" fill="#eef5ee" stroke="#3B6D11" stroke-width="2"/>
+                <text x="212" y="26" font-size="9" font-weight="bold" fill="#3B6D11" text-anchor="middle">Student reads this →</text>
+                <rect x="156" y="30" width="112" height="1" fill="#c0e0c0"/>
+                <text x="212" y="52" font-size="8" fill="#1B2466" text-anchor="middle">"Bonjour, comment</text>
+                <text x="212" y="64" font-size="8" fill="#1B2466" text-anchor="middle">allez-vous aujourd'hui?"</text>
+                <!-- arrow turning screen -->
+                <rect x="108" y="48" width="36" height="16" rx="8" fill="#F5C400"/>
+                <text x="126" y="59" font-size="9" text-anchor="middle" fill="#1B2466" font-weight="bold">⇄</text>
+                <!-- laptop turning -->
+                <text x="140" y="130" font-size="9" fill="#5B5EA6" text-anchor="middle" font-weight="bold">↩ Turn the screen to face the student</text>
+              </svg>
+              <div style="padding:20px 24px;display:flex;flex-direction:column;justify-content:center;gap:8px;background:white;">
+                <div style="background:var(--navy);color:var(--yellow);font-size:12px;font-weight:900;padding:4px 12px;display:inline-block;width:fit-content;">STEP 3</div>
+                <div style="font-size:16px;font-weight:700;color:var(--navy);">Turn the screen toward your student</div>
+                <div style="font-size:14px;color:var(--navy);line-height:1.7;">The translation appears on the <strong>right side</strong> in the student's language. <strong>Turn the laptop or tablet screen</strong> so the student can read it. They do not need to type anything — just read the screen.</div>
+              </div>
+            </div>
+
+            <!-- STEP 4 -->
+            <div style="display:grid;grid-template-columns:280px 1fr;gap:0;border:2px solid #e8e8ee;">
+              <svg viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+                <rect width="280" height="160" fill="#f5f5fa"/>
+                <!-- left panel: student's words appear in English -->
+                <rect x="8" y="8" width="120" height="110" rx="4" fill="#eef5ee" stroke="#3B6D11" stroke-width="2"/>
+                <text x="68" y="26" font-size="9" font-weight="bold" fill="#3B6D11" text-anchor="middle">YOU read this</text>
+                <rect x="12" y="30" width="112" height="1" fill="#c0e0c0"/>
+                <text x="68" y="52" font-size="8" fill="#1B2466" text-anchor="middle">"Stomach hurts today"</text>
+                <text x="68" y="64" font-size="8" fill="#aaa" text-anchor="middle">(their words in English)</text>
+                <!-- right panel: student speaks -->
+                <rect x="152" y="8" width="120" height="110" rx="4" fill="white" stroke="#1B2466" stroke-width="1.5"/>
+                <text x="212" y="26" font-size="9" font-weight="bold" fill="#1B2466" text-anchor="middle">STUDENT speaks here</text>
+                <rect x="156" y="30" width="112" height="1" fill="#e0e0e8"/>
+                <circle cx="212" cy="80" r="24" fill="#3B6D11"/>
+                <text x="212" y="88" font-size="22" text-anchor="middle" fill="white">🎙️</text>
+                <!-- swap badge -->
+                <rect x="108" y="48" width="36" height="16" rx="8" fill="#F5C400"/>
+                <text x="126" y="59" font-size="9" text-anchor="middle" fill="#1B2466" font-weight="bold">⇄</text>
+                <text x="140" y="136" font-size="8" fill="#5B5EA6" text-anchor="middle" font-weight="bold">Press ⇄ Swap first, then student clicks mic</text>
+              </svg>
+              <div style="padding:20px 24px;display:flex;flex-direction:column;justify-content:center;gap:8px;background:white;">
+                <div style="background:var(--navy);color:var(--yellow);font-size:12px;font-weight:900;padding:4px 12px;display:inline-block;width:fit-content;">STEP 4</div>
+                <div style="font-size:16px;font-weight:700;color:var(--navy);">Swap so the student can speak back</div>
+                <div style="font-size:14px;color:var(--navy);line-height:1.7;">Press the <strong>⇄ Swap button</strong> in the middle. Now the right side is the student's language. Have the student click the <strong>🎙️ microphone</strong> on the right and speak in their language. Their words appear in <strong>English on the left</strong> for you to read.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- WARNING -->
+        <div style="background:var(--yellow);padding:20px 24px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy);margin-bottom:8px;">⚠ If the microphone icon is grey and won't click</div>
+          <div style="font-size:14px;color:var(--navy);line-height:1.6;">This is an IT system setting — not a website error. Go to <strong>Apple Menu → System Settings → Privacy &amp; Security → Microphone</strong> and make sure your browser is switched on. If the setting is locked, contact your IT department.</div>
+        </div>
+
+        <div style="text-align:center;padding:8px 0;">
+          <a class="btn-open" href="https://translate.google.com" target="_blank" style="font-size:15px;padding:14px 32px;">Open Google Translate Voice <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEDICATED: DOCS PANEL -->
+    <div class="panel" id="panel-tool-docs">
+      <div class="hero-strip">
+        <p class="hero-eyebrow">Tool 02 — Documents</p>
+        <h1 class="hero-title">Translate any document <span>in minutes.</span></h1>
+        <p class="hero-sub">Upload a PDF or Word file and get a translated, editable copy — no typing, no copying and pasting.</p>
+      </div>
+      <div class="stat-strip">
+        <div class="stat"><span class="stat-num">10MB</span><span class="stat-label">Max file size</span></div>
+        <div class="stat"><span class="stat-num">0</span><span class="stat-label">Account needed</span></div>
+        <div class="stat"><span class="stat-num">Free</span><span class="stat-label">Always</span></div>
+        <div class="stat"><span class="stat-num">.docx</span><span class="stat-label">Download format</span></div>
+      </div>
+      <div style="padding:32px 48px;display:flex;flex-direction:column;gap:16px;">
+
+        <!-- BEST USED FOR -->
+        <div style="background:var(--white);border:2px solid var(--yellow);padding:24px 32px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;">Best used for</div>
+          <div style="font-size:14px;color:var(--navy);line-height:1.8;">Blank class worksheets and activity sheets · Permission forms · School event flyers · General information packages sent home · Any document that does not already have a student's personal information filled in.</div>
+        </div>
+
+        <!-- PICTORIAL STEPS -->
+        <div style="background:var(--white);border:2px solid var(--yellow);padding:28px 32px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--purple);margin-bottom:24px;">How to use it — follow the pictures</div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+
+            <!-- STEP 1 -->
+            <div style="display:grid;grid-template-columns:280px 1fr;gap:0;border:2px solid #e8e8ee;">
+              <svg viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+                <rect width="280" height="160" fill="#f5f5fa"/>
+                <rect width="280" height="28" fill="#d0d0da"/>
+                <circle cx="16" cy="14" r="5" fill="#f0957a"/>
+                <circle cx="30" cy="14" r="5" fill="#f5c400"/>
+                <circle cx="44" cy="14" r="5" fill="#7bc67a"/>
+                <rect x="56" y="7" width="160" height="14" rx="4" fill="white"/>
+                <text x="136" y="17" font-size="8" fill="#5B5EA6" text-anchor="middle" font-family="monospace">translate.google.com</text>
+                <rect x="8" y="36" width="264" height="116" rx="4" fill="white"/>
+                <!-- tab bar -->
+                <rect x="16" y="44" width="60" height="20" rx="4" fill="#e8e8ee"/>
+                <text x="46" y="57" font-size="9" text-anchor="middle" fill="#888">Text</text>
+                <rect x="82" y="44" width="90" height="20" rx="4" fill="#1B2466"/>
+                <text x="127" y="58" font-size="9" font-weight="bold" fill="#F5C400" text-anchor="middle">📄 Documents</text>
+                <!-- arrow pointing up at tab -->
+                <text x="127" y="88" font-size="11" text-anchor="middle" fill="#5B5EA6">↑</text>
+                <text x="127" y="104" font-size="9" font-weight="bold" fill="#5B5EA6" text-anchor="middle">Click this tab first</text>
+              </svg>
+              <div style="padding:20px 24px;display:flex;flex-direction:column;justify-content:center;gap:8px;background:white;">
+                <div style="background:var(--navy);color:var(--yellow);font-size:12px;font-weight:900;padding:4px 12px;display:inline-block;width:fit-content;">STEP 1</div>
+                <div style="font-size:16px;font-weight:700;color:var(--navy);">Go to the website and click Documents</div>
+                <div style="font-size:14px;color:var(--navy);line-height:1.7;">Go to <strong>translate.google.com</strong>. At the top of the page you will see tabs that say <strong>Text</strong> and <strong>Documents</strong>. Click <strong>Documents</strong>.</div>
+              </div>
+            </div>
+
+            <!-- STEP 2 -->
+            <div style="display:grid;grid-template-columns:280px 1fr;gap:0;border:2px solid #e8e8ee;">
+              <svg viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+                <rect width="280" height="160" fill="#f5f5fa"/>
+                <rect x="20" y="16" width="240" height="128" rx="6" fill="white" stroke="#1B2466" stroke-width="2" stroke-dasharray="8,4"/>
+                <text x="140" y="60" font-size="32" text-anchor="middle">📄</text>
+                <text x="140" y="88" font-size="11" font-weight="bold" fill="#1B2466" text-anchor="middle">Click here to choose your file</text>
+                <text x="140" y="106" font-size="9" fill="#888" text-anchor="middle">PDF or Word document</text>
+                <rect x="80" y="118" width="120" height="18" rx="4" fill="#5B5EA6"/>
+                <text x="140" y="130" font-size="9" font-weight="bold" fill="white" text-anchor="middle">Must be under 10 MB</text>
+              </svg>
+              <div style="padding:20px 24px;display:flex;flex-direction:column;justify-content:center;gap:8px;background:white;">
+                <div style="background:var(--navy);color:var(--yellow);font-size:12px;font-weight:900;padding:4px 12px;display:inline-block;width:fit-content;">STEP 2</div>
+                <div style="font-size:16px;font-weight:700;color:var(--navy);">Upload your file</div>
+                <div style="font-size:14px;color:var(--navy);line-height:1.7;">Click the upload area and find your PDF or Word file on your computer. Select it. <strong>Important:</strong> the file must be smaller than 10 MB or it will not upload.</div>
+              </div>
+            </div>
+
+            <!-- STEP 3 -->
+            <div style="display:grid;grid-template-columns:280px 1fr;gap:0;border:2px solid #e8e8ee;">
+              <svg viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+                <rect width="280" height="160" fill="#f5f5fa"/>
+                <!-- language selectors -->
+                <rect x="16" y="20" width="100" height="36" rx="4" fill="white" stroke="#1B2466" stroke-width="2"/>
+                <text x="66" y="42" font-size="10" font-weight="bold" fill="#1B2466" text-anchor="middle">English ✓</text>
+                <rect x="164" y="20" width="100" height="36" rx="4" fill="white" stroke="#5B5EA6" stroke-width="2"/>
+                <text x="214" y="42" font-size="10" fill="#5B5EA6" text-anchor="middle">Select language ▾</text>
+                <!-- swap -->
+                <rect x="120" y="28" width="40" height="20" rx="10" fill="#F5C400"/>
+                <text x="140" y="41" font-size="12" text-anchor="middle" fill="#1B2466" font-weight="bold">⇄</text>
+                <!-- translate button -->
+                <rect x="60" y="90" width="160" height="44" rx="6" fill="#1B2466"/>
+                <text x="140" y="117" font-size="14" font-weight="bold" fill="white" text-anchor="middle">Translate →</text>
+              </svg>
+              <div style="padding:20px 24px;display:flex;flex-direction:column;justify-content:center;gap:8px;background:white;">
+                <div style="background:var(--navy);color:var(--yellow);font-size:12px;font-weight:900;padding:4px 12px;display:inline-block;width:fit-content;">STEP 3</div>
+                <div style="font-size:16px;font-weight:700;color:var(--navy);">Set languages and click Translate</div>
+                <div style="font-size:14px;color:var(--navy);line-height:1.7;">Make sure the left box shows <strong>English</strong>. Click the right box and type the family's language to select it. Then click the big <strong>Translate</strong> button.</div>
+              </div>
+            </div>
+
+            <!-- STEP 4 -->
+            <div style="display:grid;grid-template-columns:280px 1fr;gap:0;border:2px solid #e8e8ee;">
+              <svg viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+                <rect width="280" height="160" fill="#f5f5fa"/>
+                <rect x="40" y="12" width="200" height="90" rx="6" fill="white" stroke="#3B6D11" stroke-width="2"/>
+                <text x="140" y="44" font-size="28" text-anchor="middle">📄</text>
+                <text x="140" y="70" font-size="10" font-weight="bold" fill="#3B6D11" text-anchor="middle">Translation ready!</text>
+                <text x="140" y="86" font-size="9" fill="#888" text-anchor="middle">Click Download below</text>
+                <!-- download button -->
+                <rect x="40" y="112" width="200" height="36" rx="6" fill="#3B6D11"/>
+                <text x="140" y="134" font-size="11" font-weight="bold" fill="white" text-anchor="middle">⬇ Download as .docx (Word)</text>
+              </svg>
+              <div style="padding:20px 24px;display:flex;flex-direction:column;justify-content:center;gap:8px;background:white;">
+                <div style="background:var(--navy);color:var(--yellow);font-size:12px;font-weight:900;padding:4px 12px;display:inline-block;width:fit-content;">STEP 4</div>
+                <div style="font-size:16px;font-weight:700;color:var(--navy);">Download as Word (.docx)</div>
+                <div style="font-size:14px;color:var(--navy);line-height:1.7;">When the translation is ready, click <strong>Download</strong>. Choose <strong>.docx (Word format)</strong> — not PDF. The Word format lets you open and edit the file to fix any errors.</div>
+              </div>
+            </div>
+
+            <!-- STEP 5 -->
+            <div style="display:grid;grid-template-columns:280px 1fr;gap:0;border:2px solid #e8e8ee;">
+              <svg viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+                <rect width="280" height="160" fill="#f5f5fa"/>
+                <rect x="20" y="12" width="240" height="136" rx="6" fill="white" stroke="#1B2466" stroke-width="1.5"/>
+                <text x="140" y="36" font-size="10" font-weight="bold" fill="#1B2466" text-anchor="middle">Open in Word — read carefully</text>
+                <rect x="24" y="42" width="232" height="1" fill="#e8e8ee"/>
+                <text x="140" y="62" font-size="8.5" fill="#555" text-anchor="middle">Check for any words that look strange</text>
+                <text x="140" y="78" font-size="8.5" fill="#555" text-anchor="middle">or don't seem right in context.</text>
+                <!-- magnifying glass icon -->
+                <circle cx="140" cy="116" r="20" fill="none" stroke="#F5C400" stroke-width="3"/>
+                <line x1="154" y1="130" x2="166" y2="142" stroke="#F5C400" stroke-width="3" stroke-linecap="round"/>
+                <text x="140" y="120" font-size="16" text-anchor="middle" fill="#1B2466">👁</text>
+              </svg>
+              <div style="padding:20px 24px;display:flex;flex-direction:column;justify-content:center;gap:8px;background:white;">
+                <div style="background:var(--navy);color:var(--yellow);font-size:12px;font-weight:900;padding:4px 12px;display:inline-block;width:fit-content;">STEP 5</div>
+                <div style="font-size:16px;font-weight:700;color:var(--navy);">Open and read before sharing</div>
+                <div style="font-size:14px;color:var(--navy);line-height:1.7;">Open the downloaded file in Word. Read through the translation before handing it to families. Look for any words that seem odd — Google Translate is good but not perfect. Fix anything that looks wrong, then share.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- WARNING -->
+        <div style="background:var(--yellow);padding:20px 24px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy);margin-bottom:8px;">⚠ Two things to watch for</div>
+          <div style="font-size:14px;color:var(--navy);line-height:1.6;"><strong>File too large:</strong> If your file is over 10 MB, it will not upload. Open the PDF in Preview → Export → Reduce File Size first, or use <strong>smallpdf.com</strong> (free, no login).<br><br><strong>Literal translation errors:</strong> Google Translate is very good but not perfect. During field testing, the word "space" in a board game was translated as "outer space" in French instead of the correct game square. Always read the .docx before handing it to families.</div>
+        </div>
+
+        <div style="text-align:center;padding:8px 0;">
+          <a class="btn-open" href="https://translate.google.com/?op=docs" target="_blank" style="font-size:15px;padding:14px 32px;">Open Document Translator <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEDICATED: EMAIL PANEL -->
+    <div class="panel" id="panel-tool-email">
+      <div class="hero-strip">
+        <p class="hero-eyebrow">Tool 03 — Parent Emails</p>
+        <h1 class="hero-title">Write home to families <span>in their language.</span></h1>
+        <p class="hero-sub">DeepL produces more natural, nuanced translations than standard tools — ideal for sensitive parent communication.</p>
+      </div>
+      <div class="stat-strip">
+        <div class="stat"><span class="stat-num">✗</span><span class="stat-label">Redact first</span></div>
+        <div class="stat"><span class="stat-num">0</span><span class="stat-label">Account needed</span></div>
+        <div class="stat"><span class="stat-num">Free</span><span class="stat-label">Always</span></div>
+        <div class="stat"><span class="stat-num">30+</span><span class="stat-label">Languages</span></div>
+      </div>
+      <div style="padding:32px 48px;display:flex;flex-direction:column;gap:16px;">
+
+        <!-- BEST USED FOR -->
+        <div style="background:var(--white);border:2px solid var(--yellow);padding:24px 32px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;">Best used for</div>
+          <div style="font-size:14px;color:var(--navy);line-height:1.8;">General parent updates · Meeting requests · Homework reminders · Celebration messages · Any written communication going home to families — as long as you follow the Safe Privacy Step first.</div>
+        </div>
+
+        <!-- PRIVACY NOTICE -->
+        <div style="background:var(--navy);padding:20px 24px;display:flex;gap:14px;align-items:flex-start;">
+          <span style="font-size:22px;flex-shrink:0;">✗</span>
+          <div>
+            <div style="font-size:12px;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Read this before you start — The Safe Privacy Step</div>
+            <div style="font-size:14px;color:rgba(255,255,255,0.9);line-height:1.6;">DeepL is run by an outside company. Before you paste anything into it, you must remove the student's real name and replace it with the word <strong style="color:var(--yellow);">[Student]</strong>. Do the same for any medical or IEP details. This one step keeps you fully protected under school privacy rules.</div>
+          </div>
+        </div>
+
+        <!-- PICTORIAL STEPS -->
+        <div style="background:var(--white);border:2px solid var(--yellow);padding:28px 32px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--purple);margin-bottom:24px;">How to use it — follow the pictures</div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+
+            <!-- STEP 1 -->
+            <div style="display:grid;grid-template-columns:280px 1fr;gap:0;border:2px solid #e8e8ee;">
+              <svg viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+                <rect width="280" height="160" fill="#f5f5fa"/>
+                <rect x="16" y="12" width="248" height="136" rx="6" fill="white" stroke="#1B2466" stroke-width="1.5"/>
+                <text x="140" y="36" font-size="10" font-weight="bold" fill="#1B2466" text-anchor="middle">Your school email — New Message</text>
+                <rect x="20" y="42" width="240" height="1" fill="#e8e8ee"/>
+                <text x="28" y="62" font-size="8.5" fill="#1B2466">Dear Marcus,</text>
+                <text x="28" y="78" font-size="8.5" fill="#1B2466">Marcus has been doing well in class this week.</text>
+                <text x="28" y="94" font-size="8.5" fill="#1B2466">Please bring his permission form tomorrow.</text>
+                <rect x="200" y="126" width="56" height="16" rx="4" fill="#ccc"/>
+                <text x="228" y="137" font-size="8" fill="#888" text-anchor="middle">Send (not yet!)</text>
+              </svg>
+              <div style="padding:20px 24px;display:flex;flex-direction:column;justify-content:center;gap:8px;background:white;">
+                <div style="background:var(--navy);color:var(--yellow);font-size:12px;font-weight:900;padding:4px 12px;display:inline-block;width:fit-content;">STEP 1</div>
+                <div style="font-size:16px;font-weight:700;color:var(--navy);">Write your email as normal</div>
+                <div style="font-size:14px;color:var(--navy);line-height:1.7;">Open your school email and write your message as you normally would. <strong>Do not click Send yet.</strong> You need to do the privacy step first.</div>
+              </div>
+            </div>
+
+            <!-- STEP 2 -->
+            <div style="display:grid;grid-template-columns:280px 1fr;gap:0;border:2px solid #e8e8ee;">
+              <svg viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+                <rect width="280" height="160" fill="#fffbe6"/>
+                <rect x="16" y="12" width="248" height="136" rx="6" fill="white" stroke="#F5C400" stroke-width="2"/>
+                <text x="140" y="36" font-size="10" font-weight="bold" fill="#1B2466" text-anchor="middle">Erase the name — replace with [Student]</text>
+                <rect x="20" y="42" width="240" height="1" fill="#F5C400"/>
+                <!-- strikethrough name -->
+                <text x="28" y="66" font-size="8.5" fill="#a0001a" text-decoration="line-through">Dear Marcus,</text>
+                <text x="28" y="82" font-size="9" font-weight="bold" fill="#1B2466">Dear [Student],</text>
+                <text x="28" y="100" font-size="8.5" fill="#a0001a" text-decoration="line-through">Marcus has been doing well...</text>
+                <text x="28" y="116" font-size="9" font-weight="bold" fill="#1B2466">[Student] has been doing well...</text>
+                <text x="28" y="138" font-size="8" fill="#3B6D11" font-weight="bold">✓ Safe to paste into DeepL now</text>
+              </svg>
+              <div style="padding:20px 24px;display:flex;flex-direction:column;justify-content:center;gap:8px;background:white;">
+                <div style="background:var(--navy);color:var(--yellow);font-size:12px;font-weight:900;padding:4px 12px;display:inline-block;width:fit-content;">STEP 2 — Privacy First</div>
+                <div style="font-size:16px;font-weight:700;color:var(--navy);">Replace the student's name</div>
+                <div style="font-size:14px;color:var(--navy);line-height:1.7;">Go through your email and <strong>delete the student's real name</strong> every time it appears. Type <strong>[Student]</strong> in its place. Do the same for any medical details or IEP information. Now the email is safe to translate.</div>
+              </div>
+            </div>
+
+            <!-- STEP 3 -->
+            <div style="display:grid;grid-template-columns:280px 1fr;gap:0;border:2px solid #e8e8ee;">
+              <svg viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+                <rect width="280" height="160" fill="#f5f5fa"/>
+                <!-- left: your email selected -->
+                <rect x="8" y="12" width="124" height="100" rx="4" fill="white" stroke="#1B2466" stroke-width="1.5"/>
+                <text x="70" y="30" font-size="8" font-weight="bold" fill="#1B2466" text-anchor="middle">Your email (safe version)</text>
+                <rect x="12" y="34" width="116" height="1" fill="#e8e8ee"/>
+                <rect x="12" y="40" width="112" height="64" rx="2" fill="#c8d8ff" opacity="0.6"/>
+                <text x="68" y="58" font-size="7.5" fill="#1B2466" text-anchor="middle">Dear [Student],</text>
+                <text x="68" y="72" font-size="7.5" fill="#1B2466" text-anchor="middle">[Student] has been</text>
+                <text x="68" y="86" font-size="7.5" fill="#1B2466" text-anchor="middle">doing well...</text>
+                <!-- copy label -->
+                <text x="70" y="124" font-size="9" font-weight="bold" fill="#5B5EA6" text-anchor="middle">Select all → Copy (⌘C)</text>
+                <!-- arrow -->
+                <text x="148" y="68" font-size="20" fill="#1B2466" text-anchor="middle">→</text>
+                <!-- right: DeepL -->
+                <rect x="160" y="12" width="112" height="100" rx="4" fill="#5B5EA6"/>
+                <text x="216" y="36" font-size="10" font-weight="bold" fill="white" text-anchor="middle">DeepL</text>
+                <text x="216" y="50" font-size="7" fill="rgba(255,255,255,0.7)" text-anchor="middle">deepl.com/translator</text>
+                <rect x="168" y="58" width="96" height="44" rx="3" fill="rgba(255,255,255,0.15)"/>
+                <text x="216" y="80" font-size="7.5" fill="white" text-anchor="middle">Paste text here</text>
+                <text x="216" y="94" font-size="7.5" fill="#F5C400" text-anchor="middle">Select language →</text>
+              </svg>
+              <div style="padding:20px 24px;display:flex;flex-direction:column;justify-content:center;gap:8px;background:white;">
+                <div style="background:var(--navy);color:var(--yellow);font-size:12px;font-weight:900;padding:4px 12px;display:inline-block;width:fit-content;">STEP 3</div>
+                <div style="font-size:16px;font-weight:700;color:var(--navy);">Copy and paste into DeepL</div>
+                <div style="font-size:14px;color:var(--navy);line-height:1.7;">Select all the text in your email and copy it (<strong>Ctrl+C</strong> on Windows, <strong>Cmd+C</strong> on Mac). Open a new browser tab, go to <strong>deepl.com/translator</strong>, and paste the text into the left box. Select the family's language on the right.</div>
+              </div>
+            </div>
+
+            <!-- STEP 4 -->
+            <div style="display:grid;grid-template-columns:280px 1fr;gap:0;border:2px solid #e8e8ee;">
+              <svg viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+                <rect width="280" height="160" fill="#f5f5fa"/>
+                <rect x="8" y="12" width="264" height="104" rx="4" fill="#eef5ee" stroke="#3B6D11" stroke-width="2"/>
+                <text x="140" y="34" font-size="10" font-weight="bold" fill="#3B6D11" text-anchor="middle">DeepL — Translation complete</text>
+                <rect x="12" y="40" width="256" height="1" fill="#c0e0c0"/>
+                <text x="140" y="60" font-size="8.5" fill="#1B2466" text-anchor="middle">Cher [Student],</text>
+                <text x="140" y="76" font-size="8.5" fill="#1B2466" text-anchor="middle">[Student] a très bien travaillé cette semaine.</text>
+                <!-- copy button -->
+                <rect x="80" y="88" width="120" height="20" rx="4" fill="#3B6D11"/>
+                <text x="140" y="101" font-size="9" font-weight="bold" fill="white" text-anchor="middle">Copy Translation</text>
+                <text x="140" y="132" font-size="9" font-weight="bold" fill="#5B5EA6" text-anchor="middle">Click Copy, then go back to your school email</text>
+              </svg>
+              <div style="padding:20px 24px;display:flex;flex-direction:column;justify-content:center;gap:8px;background:white;">
+                <div style="background:var(--navy);color:var(--yellow);font-size:12px;font-weight:900;padding:4px 12px;display:inline-block;width:fit-content;">STEP 4</div>
+                <div style="font-size:16px;font-weight:700;color:var(--navy);">Copy the translation</div>
+                <div style="font-size:14px;color:var(--navy);line-height:1.7;">DeepL will translate automatically. Click the <strong>Copy</strong> button to copy the translated text. Then go back to your school email tab.</div>
+              </div>
+            </div>
+
+            <!-- STEP 5 -->
+            <div style="display:grid;grid-template-columns:280px 1fr;gap:0;border:2px solid #e8e8ee;">
+              <svg viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+                <rect width="280" height="160" fill="#f5f5fa"/>
+                <rect x="16" y="12" width="248" height="136" rx="6" fill="white" stroke="#1B2466" stroke-width="1.5"/>
+                <text x="140" y="34" font-size="10" font-weight="bold" fill="#1B2466" text-anchor="middle">Back in school email — paste + fix name</text>
+                <rect x="20" y="40" width="240" height="1" fill="#e8e8ee"/>
+                <!-- strikethrough [Student] replaced with real name -->
+                <text x="28" y="62" font-size="8.5" fill="#a0001a" text-decoration="line-through">Cher [Student],</text>
+                <text x="28" y="78" font-size="9" font-weight="bold" fill="#3B6D11">Cher Marcus, ✓</text>
+                <text x="28" y="94" font-size="8.5" fill="#a0001a" text-decoration="line-through">[Student] a très bien travaillé...</text>
+                <text x="28" y="110" font-size="9" font-weight="bold" fill="#3B6D11">Marcus a très bien travaillé... ✓</text>
+                <!-- send button -->
+                <rect x="196" y="124" width="60" height="18" rx="4" fill="#1B2466"/>
+                <text x="226" y="136" font-size="9" font-weight="bold" fill="#F5C400" text-anchor="middle">Send ✓</text>
+              </svg>
+              <div style="padding:20px 24px;display:flex;flex-direction:column;justify-content:center;gap:8px;background:white;">
+                <div style="background:var(--navy);color:var(--yellow);font-size:12px;font-weight:900;padding:4px 12px;display:inline-block;width:fit-content;">STEP 5</div>
+                <div style="font-size:16px;font-weight:700;color:var(--navy);">Paste, restore the name, and send</div>
+                <div style="font-size:14px;color:var(--navy);line-height:1.7;">Paste the translation into your school email. Find every place where it says <strong>[Student]</strong> and replace it with the student's real name. Double-check the email looks right, then click <strong>Send</strong>.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- WARNING -->
+        <div style="background:var(--yellow);padding:20px 24px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy);margin-bottom:8px;">⚠ Why DeepL instead of Google Translate for emails?</div>
+          <div style="font-size:14px;color:var(--navy);line-height:1.6;">DeepL produces more conversational, natural-sounding translations — especially for emotional or sensitive topics. When writing home about a student's progress, a concern, or a family event, DeepL's output feels less robotic and more respectful to families reading it.</div>
+        </div>
+
+        <div style="text-align:center;padding:8px 0;">
+          <a class="btn-open" href="https://www.deepl.com/translator" target="_blank" style="font-size:15px;padding:14px 32px;">Open DeepL Translator <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- MATRIX PANEL -->
+    <div class="panel" id="panel-matrix">
+      <div class="matrix-hero">
+        <p class="hero-eyebrow">Quick Reference</p>
+        <h1 class="hero-title">When something breaks,<br><span>here's the fix.</span></h1>
+        <p class="hero-sub">Issues are grouped by tool. Click any row to expand the full solution.</p>
+      </div>
+      <div class="matrix-area">
+
+        <!-- GROUP 1: VOICE -->
+        <div class="matrix-group-header">
+          <span class="matrix-group-icon">🎙️</span>
+          <span>Tool 01 — Voice Conversations</span>
+          <span class="matrix-group-url">translate.google.com</span>
+        </div>
+        <table class="matrix-table" style="margin-bottom:24px;">
+          <thead><tr>
+            <th style="width:32%">The Bottleneck</th>
+            <th style="width:56%">Summary</th>
+            <th style="width:12%"></th>
+          </tr></thead>
+          <tbody>
+            <tr class="matrix-row" onclick="toggleFix('fix1', this)">
+              <td><span class="bottleneck-text">Dead mic icon on MacBook</span></td>
+              <td>Greyed out or unclickable microphone button</td>
+              <td><span class="expand-icon">+</span></td>
+            </tr>
+            <tr class="fix-row" id="fix1">
+              <td colspan="3"><span class="fix-label">The Fix — Step by Step</span>
+                This is a system-level block, not a website error. Go to <strong>Apple Menu → System Settings → Privacy &amp; Security → Microphone</strong> and enable your browser. If the toggle is greyed out or locked, the school MDM policy is blocking it — submit an IT request. You cannot fix this from the browser.
+              </td>
+            </tr>
+            <tr class="matrix-row" onclick="toggleFix('fix8', this)">
+              <td><span class="bottleneck-text">Wrong language auto-detected</span></td>
+              <td>Google Translate picked the wrong language automatically</td>
+              <td><span class="expand-icon">+</span></td>
+            </tr>
+            <tr class="fix-row" id="fix8">
+              <td colspan="3"><span class="fix-label">The Fix — Step by Step</span>
+                Do not use <strong>Detect language</strong> — always set the language manually. Click the language name at the top of each panel and type the name to search for it. If you are unsure, ask the student to type a few words and check what Google Translate detects, then switch from auto-detect to that specific language going forward.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- GROUP 2: DOCS -->
+        <div class="matrix-group-header">
+          <span class="matrix-group-icon">📄</span>
+          <span>Tool 02 — Document Translation</span>
+          <span class="matrix-group-url">translate.google.com/?op=docs</span>
+        </div>
+        <table class="matrix-table" style="margin-bottom:24px;">
+          <thead><tr>
+            <th style="width:32%">The Bottleneck</th>
+            <th style="width:56%">Summary</th>
+            <th style="width:12%"></th>
+          </tr></thead>
+          <tbody>
+            <tr class="matrix-row" onclick="toggleFix('fix2', this)">
+              <td><span class="bottleneck-text">10 MB upload rejected</span></td>
+              <td>Heavy PDF or PowerPoint file fails to upload</td>
+              <td><span class="expand-icon">+</span></td>
+            </tr>
+            <tr class="fix-row" id="fix2">
+              <td colspan="3"><span class="fix-label">The Fix — Step by Step</span>
+                Compress the file before uploading. For PDFs: open in <strong>Preview → File → Export → Reduce File Size</strong>. Or use <strong>smallpdf.com</strong> (free, no account needed). For PowerPoints: delete embedded videos, then compress images via <strong>Insert → Pictures → Compress Images</strong>. Re-upload once under 10 MB.
+              </td>
+            </tr>
+            <tr class="matrix-row" onclick="toggleFix('fix3', this)">
+              <td><span class="bottleneck-text">Literal translation error</span></td>
+              <td>"Space" → "outer space" (espace) not a game square (case)</td>
+              <td><span class="expand-icon">+</span></td>
+            </tr>
+            <tr class="fix-row" id="fix3">
+              <td colspan="3"><span class="fix-label">The Fix — Step by Step</span>
+                Always download the output as <strong>.docx</strong> (not PDF). Open in Word or Google Docs and use <strong>Ctrl+F / Cmd+F → Find &amp; Replace</strong> to locate and correct the mistranslated term. For recurring problem words, add a flagged comment in your source template so you remember to check each time.
+              </td>
+            </tr>
+            <tr class="matrix-row" onclick="toggleFix('fix6', this)">
+              <td><span class="bottleneck-text">Broken layout after download</span></td>
+              <td>Text boxes shifted, columns misaligned in the .docx</td>
+              <td><span class="expand-icon">+</span></td>
+            </tr>
+            <tr class="fix-row" id="fix6">
+              <td colspan="3"><span class="fix-label">The Fix — Step by Step</span>
+                This happens when the original file uses complex layouts. After downloading the .docx, open in Word and use <strong>View → Print Layout</strong> to spot shifted elements. Drag any misplaced text box back into position. For heavily formatted worksheets, it is faster to copy only the translated text and paste it manually into your original file, section by section.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- GROUP 3: DEEPL -->
+        <div class="matrix-group-header">
+          <span class="matrix-group-icon">✉️</span>
+          <span>Tool 03 — Parent Emails (DeepL)</span>
+          <span class="matrix-group-url">deepl.com/translator</span>
+        </div>
+        <table class="matrix-table" style="margin-bottom:24px;">
+          <thead><tr>
+            <th style="width:32%">The Bottleneck</th>
+            <th style="width:56%">Summary</th>
+            <th style="width:12%"></th>
+          </tr></thead>
+          <tbody>
+            <tr class="matrix-row" onclick="toggleFix('fix4', this)">
+              <td><span class="bottleneck-text">FIPPA privacy risk</span></td>
+              <td>Student name or sensitive data pasted into DeepL</td>
+              <td><span class="expand-icon">+</span></td>
+            </tr>
+            <tr class="fix-row" id="fix4">
+              <td colspan="3"><span class="fix-label">The Safe Privacy Step — Required Every Time</span>
+                Before pasting into DeepL, erase the student's actual name and type <strong>[Student]</strong> in its place. Do the same for any medical details or IEP information. Translate the safe version only. Paste back into your school email and re-type the student's real name by hand before sending.
+              </td>
+            </tr>
+            <tr class="matrix-row" onclick="toggleFix('fix5', this)">
+              <td><span class="bottleneck-text">Wrong dialect selected</span></td>
+              <td>e.g. Simplified vs Traditional Chinese, Brazilian vs European Portuguese</td>
+              <td><span class="expand-icon">+</span></td>
+            </tr>
+            <tr class="fix-row" id="fix5">
+              <td colspan="3"><span class="fix-label">The Fix — Step by Step</span>
+                Click the target language dropdown and look carefully — some languages have multiple variants (e.g. <strong>Chinese Simplified</strong> vs <strong>Chinese Traditional</strong>, or <strong>Portuguese Brazilian</strong> vs <strong>Portuguese European</strong>). Ask the family which country they are from to pick the right one. Simplified Chinese = Mainland China; Traditional = Hong Kong and Taiwan. Brazilian Portuguese covers most families from Brazil.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- GROUP 4: ALL TOOLS -->
+        <div class="matrix-group-header">
+          <span class="matrix-group-icon">⚡</span>
+          <span>All Tools</span>
+          <span class="matrix-group-url">General issues</span>
+        </div>
+        <table class="matrix-table">
+          <thead><tr>
+            <th style="width:32%">The Bottleneck</th>
+            <th style="width:56%">Summary</th>
+            <th style="width:12%"></th>
+          </tr></thead>
+          <tbody>
+            <tr class="matrix-row" onclick="toggleFix('fix7', this)">
+              <td><span class="bottleneck-text">School network blocking the site</span></td>
+              <td>Page won't load or shows "blocked" or "access denied"</td>
+              <td><span class="expand-icon">+</span></td>
+            </tr>
+            <tr class="fix-row" id="fix7">
+              <td colspan="3"><span class="fix-label">The Fix — Step by Step</span>
+                This is a school firewall issue — not a problem with the tool or your computer. You cannot fix this yourself. Email your IT department: <em>"Please whitelist translate.google.com and deepl.com for classroom language support. These sites appear to be blocked by the school filter."</em> In the meantime, try accessing the tools on your personal phone using mobile data instead of school Wi-Fi.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- GROUP 5: HUMAN CHALLENGES -->
+        <div class="matrix-group-header" style="margin-top:24px;">
+          <span class="matrix-group-icon">🧑‍🏫</span>
+          <span>Human Challenges — When the tool works but the situation is still hard</span>
+        </div>
+        <table class="matrix-table">
+          <thead><tr>
+            <th style="width:32%">The Situation</th>
+            <th style="width:56%">What to do</th>
+            <th style="width:12%"></th>
+          </tr></thead>
+          <tbody>
+            <tr class="matrix-row" onclick="toggleFix('fix-h1', this)">
+              <td><span class="bottleneck-text">The family's language isn't in Google Translate</span></td>
+              <td>Language not available or dialect not recognised</td>
+              <td><span class="expand-icon">+</span></td>
+            </tr>
+            <tr class="fix-row" id="fix-h1">
+              <td colspan="3"><span class="fix-label">What to do</span>
+                Google Translate supports 130+ languages but not all dialects or minority languages. First, try alternate names — some languages are listed differently (e.g. "Tagalog" instead of "Filipino", "Simplified Chinese" instead of "Mandarin"). If the language genuinely isn't available, contact your school's settlement worker or ELL coordinator — most districts have access to professional interpretation services. <strong>MOSAIC BC</strong> (mosaicbc.com) and <strong>DIVERSEcity</strong> offer community interpretation support in Metro Vancouver and the Fraser Valley. Your district's ELL department can also request professional translation for critical documents.
+              </td>
+            </tr>
+
+            <tr class="matrix-row" onclick="toggleFix('fix-h2', this)">
+              <td><span class="bottleneck-text">The student is not literate in their home language</span></td>
+              <td>Student cannot read the translated text on screen</td>
+              <td><span class="expand-icon">+</span></td>
+            </tr>
+            <tr class="fix-row" id="fix-h2">
+              <td colspan="3"><span class="fix-label">What to do</span>
+                This is more common than expected, particularly with students from refugee backgrounds, interrupted schooling, or oral-language-dominant communities. If a student cannot read the translation on screen, switch to the <strong>Voice tool only</strong> — spoken translation is far more accessible than written. Focus on gestures, realia, and visual cues (see the Accessible Input Checklist in the ELL Learners tab). Connect with the school's settlement worker or ELL specialist to understand the student's full literacy background before choosing a communication strategy.
+              </td>
+            </tr>
+
+            <tr class="matrix-row" onclick="toggleFix('fix-h3', this)">
+              <td><span class="bottleneck-text">The parent doesn't have a device to read the translated email</span></td>
+              <td>Family has limited or no access to technology at home</td>
+              <td><span class="expand-icon">+</span></td>
+            </tr>
+            <tr class="fix-row" id="fix-h3">
+              <td colspan="3"><span class="fix-label">What to do</span>
+                Email assumes the family has a device and checks it regularly — many newcomer and low-income families do not. If email isn't reaching a family, ask the student what communication works at home (phone call? paper note? WhatsApp?). For phone calls, use the <strong>Voice tool</strong> on speaker with the family on the line — speak in English and hold the phone to the speaker so the family hears the translation. For paper notes, print the translated .docx from Tool 02 and send it home physically. Some districts also have <strong>School Messenger</strong> with multilingual SMS options — check with your office.
+              </td>
+            </tr>
+
+            <tr class="matrix-row" onclick="toggleFix('fix-h4', this)">
+              <td><span class="bottleneck-text">The translation is correct but the family still seems confused</span></td>
+              <td>Language is translated but cultural or contextual meaning is lost</td>
+              <td><span class="expand-icon">+</span></td>
+            </tr>
+            <tr class="fix-row" id="fix-h4">
+              <td colspan="3"><span class="fix-label">What to do</span>
+                Translation converts words — it does not convert cultural context. Terms like "IEP", "report card", "PAC meeting", or "school district" may translate correctly but mean nothing to a family unfamiliar with the BC school system. When writing to families about these topics, add a plain-language sentence explaining what the term means before translating it. For example: "An IEP (this is a plan the school makes to help your child with specific learning needs) meeting is scheduled for..." Pair written communication with a follow-up check-in using the Voice tool to confirm understanding.
+              </td>
+            </tr>
+
+            <tr class="matrix-row" onclick="toggleFix('fix-h5', this)">
+              <td><span class="bottleneck-text">The student speaks a different dialect than the family</span></td>
+              <td>Student has adapted to English but family still needs support</td>
+              <td><span class="expand-icon">+</span></td>
+            </tr>
+            <tr class="fix-row" id="fix-h5">
+              <td colspan="3"><span class="fix-label">What to do</span>
+                It is common for children to acquire English faster than their parents or guardians. Do not rely on the student to translate sensitive communications — this places an unfair burden on the child and may result in information being filtered or softened. For family communication about behaviour, learning needs, or wellbeing, always use an adult interpreter. Your school's settlement worker, district ELL team, or a community organisation can connect you with appropriate support. The translation tools in this dashboard are for educator use — not for asking the student to translate for their own family.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+
+    <!-- PRIVACY PANEL -->
+    <div class="panel" id="panel-privacy">
+      <div class="privacy-hero">
+        <p class="hero-eyebrow">FIPPA Compliance — All Three Tools &nbsp;<a href="https://www.oipc.bc.ca/for-public-bodies/" target="_blank" style="color:var(--yellow);font-size:10px;font-weight:700;text-decoration:underline;letter-spacing:0.04em;">BC OIPC Guidance ↗</a></p>
+        <h1 class="hero-title" style="color:var(--white);">Privacy Rules for <span style="color:var(--yellow);">Every Tool</span></h1>
+        <p class="hero-sub">Each tool has its own privacy considerations. Know the rules before you use it.</p>
+      </div>
+      <div class="privacy-area">
+
+        <!-- WHY IT MATTERS -->
+        <div class="privacy-card">
+          <h3>Why privacy matters with free web tools</h3>
+          <p>Under BC privacy law (FIPPA), a student's name, medical information, and IEP content are protected personal data. Free web tools like Google Translate and DeepL are run by outside companies — not your school. Sharing student-identifiable information with any outside service, even by accident and even for a moment, may count as a privacy breach. The rules below keep you fully protected for each tool.</p>
+        </div>
+
+        <!-- TOOL 1: VOICE -->
+        <div style="background:var(--navy);padding:14px 24px;display:flex;align-items:center;gap:10px;">
+          <span style="font-size:18px;">🎙️</span>
+          <span style="font-size:12px;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:0.08em;">Tool 01 — Voice Conversations · translate.google.com</span>
+        </div>
+        <div class="privacy-card" style="border-left-color:var(--purple);">
+          <h3>Privacy risk level: Low — with one rule</h3>
+          <p>Google Translate Voice works in real time and does not store your conversations on your device. However, Google's servers do process what is spoken. <strong>The rule:</strong> use this tool for general classroom communication and student conversations only. Do not use it to discuss a student's medical needs, IEP details, or disciplinary matters out loud in a shared or public space where others can hear.</p>
+        </div>
+        <div class="privacy-card danger">
+          <h3>✗ Do not use for</h3>
+          <p>Discussing IEP goals or accommodations · Medical or mental health conversations · Behavioural incidents · Any conversation a parent or guardian should be part of first.</p>
+        </div>
+        <div class="privacy-card">
+          <h3>✓ Safe to use for</h3>
+          <p>Greeting a new student · Explaining a classroom task · Giving directions · Asking how a student is feeling · General check-ins and daily communication.</p>
+        </div>
+
+        <!-- TOOL 2: DOCS -->
+        <div style="background:var(--navy);padding:14px 24px;display:flex;align-items:center;gap:10px;margin-top:8px;">
+          <span style="font-size:18px;">📄</span>
+          <span style="font-size:12px;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:0.08em;">Tool 02 — Document Translation · translate.google.com/?op=docs</span>
+        </div>
+        <div class="privacy-card" style="border-left-color:var(--purple);">
+          <h3>Privacy risk level: Low — check your document first</h3>
+          <p>Google Translate Documents uploads your file to Google's servers for processing. For most classroom worksheets, activity sheets, and general handouts, this is completely fine. <strong>The rule:</strong> before uploading any document, quickly scan it for student names or personal details. Generic classroom materials with no student-identifying information are safe to upload.</p>
+        </div>
+        <div class="privacy-card danger">
+          <h3>✗ Do not upload</h3>
+          <p>Any document with a student's name already filled in · Report cards · IEP documents · Behaviour reports · Any file containing personal or medical information about a specific student.</p>
+        </div>
+        <div class="privacy-card">
+          <h3>✓ Safe to upload</h3>
+          <p>Blank worksheets · Activity sheets · Permission slips with no student names pre-filled · Class newsletters · Curriculum documents · General school information packages.</p>
+        </div>
+
+        <!-- TOOL 3: DEEPL -->
+        <div style="background:var(--navy);padding:14px 24px;display:flex;align-items:center;gap:10px;margin-top:8px;">
+          <span style="font-size:18px;">✉️</span>
+          <span style="font-size:12px;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:0.08em;">Tool 03 — Parent Emails · deepl.com/translator</span>
+        </div>
+        <div class="privacy-card" style="border-left-color:var(--purple);">
+          <h3>Privacy risk level: Moderate — redact before every use</h3>
+          <p>DeepL is a third-party tool not affiliated with your school or Google. Because parent emails often contain student names and sensitive details, you must follow the redaction step every single time before pasting text into DeepL.</p>
+        </div>
+        <div class="privacy-card">
+          <h3>The Safe Privacy Step — 4 actions, every time</h3>
+          <div class="redact-demo">
+            <strong>Step 1 — Write your email draft as normal in your school email program.</strong><br><br>
+            Step 2 — Before copying anything, erase all personal details and replace them:<br>
+            "<span class="before">Marcus Johnson</span>" → type "<span class="after">[Student]</span>" in its place<br>
+            "<span class="before">ADHD diagnosis</span>" → type "<span class="after">[medical detail]</span>" in its place<br>
+            "<span class="before">IEP accommodation for reading</span>" → type "<span class="after">[support detail]</span>" in its place<br><br>
+            Step 3 — Copy <span class="after">only the version with [Student]</span> into DeepL. Translate. Copy the result.<br><br>
+            Step 4 — Paste back into your school email. Type the student's <span class="after">real name back in by hand</span>. Then send.
+          </div>
+        </div>
+        <div class="privacy-card danger">
+          <h3>✗ Never paste these into DeepL</h3>
+          <p>Student legal names · Medical diagnoses · IEP or support plan details · Behavioural incident descriptions · Any information that could identify a specific student to an outside party.</p>
+        </div>
+        <div class="privacy-card">
+          <h3>✓ Safe to translate in DeepL</h3>
+          <p>General parent letters with no student names · Classroom updates · Event notices · Homework instructions · Anything that does not name or identify a specific student.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ZONE 4: ELL PANEL -->
+    <div class="panel" id="panel-ell">
+      <div class="ell-hero">
+        <p class="hero-eyebrow">BC Ministry Standards</p>
+        <h1 class="hero-title" style="color:var(--white);">Understanding Your <span style="color:var(--yellow);">ELL Learner</span></h1>
+        <p class="hero-sub">Use the BC ELL Quick Scale to identify where your student is — then match your tech use and classroom strategy accordingly.</p>
+      </div>
+
+      <div class="ell-area">
+
+        <!-- QUICK SCALE -->
+        <div>
+          <p class="ell-section-title">BC ELL Quick Scale — Proficiency Levels &nbsp;<a href="https://www2.gov.bc.ca/gov/content/education-training/k-12/teach/resources-for-teachers/english-language-learning" target="_blank" style="font-size:10px;color:var(--purple);font-weight:700;text-decoration:underline;letter-spacing:0.04em;">BC Ministry Resource ↗</a></p>
+          <div class="ell-scale-grid">
+
+            <div class="ell-scale-card" onclick="toggleELL(this, 'ell-drop-1')">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                <div class="ell-level-num">1</div>
+                <span class="ell-toggle-icon">+</span>
+              </div>
+              <div class="ell-level-name">Beginning</div>
+              <div class="ell-level-desc">Needs direct translation and heavy visual scaffolding. Minimal English production.</div>
+              <span class="ell-tech-badge tech-high">Tech Use: High</span>
+              <span class="ell-expand-hint">↓ Tap for examples & tool guidance</span>
+              <div class="ell-dropdown" id="ell-drop-1">
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">What this looks like in class</span>
+                  Points and uses gestures instead of words. Copies from the board but may not understand what is written. Responds with single words or nods. May be silent for weeks — this is normal.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">🎙️ Voice tool</span>
+                  Use constantly. Speak every instruction in English and let the student hear it in their language. Turn the screen toward them for every task explanation.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">📄 Documents tool</span>
+                  Translate all take-home materials, activity sheets, and permission forms before sending them.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">✉️ Emails tool</span>
+                  All family communication should be translated. Families at this stage likely need the same level of support as the student.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">Non-tech tip</span>
+                  Pair every spoken word with an object, gesture, or picture. A visual schedule on the desk makes routines predictable without language.
+                </div>
+              </div>
+            </div>
+
+            <div class="ell-scale-card" onclick="toggleELL(this, 'ell-drop-2')">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                <div class="ell-level-num">2</div>
+                <span class="ell-toggle-icon">+</span>
+              </div>
+              <div class="ell-level-name">Developing</div>
+              <div class="ell-level-desc">Uses simple everyday English. Relies on familiar vocabulary and routines.</div>
+              <span class="ell-tech-badge tech-high">Tech Use: High / Moderate</span>
+              <span class="ell-expand-hint">↓ Tap for examples & tool guidance</span>
+              <div class="ell-dropdown" id="ell-drop-2">
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">What this looks like in class</span>
+                  Can say "I don't understand" or "can you help me?" Participates in familiar routines (lineup, snack, attendance). Struggles with multi-step instructions or new vocabulary. May mix home language and English in the same sentence.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">🎙️ Voice tool</span>
+                  Use for new concepts or complex instructions. For simple daily routines the student knows well, try English only first.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">📄 Documents tool</span>
+                  Still translate most materials. The student may be starting to decode English text but comprehension of written instructions is still limited.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">✉️ Emails tool</span>
+                  Translate all family correspondence. Start including brief English summaries alongside translated text to build familiarity.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">Non-tech tip</span>
+                  Give instructions one step at a time. Check for understanding by asking the student to show you, not just say "yes."
+                </div>
+              </div>
+            </div>
+
+            <div class="ell-scale-card" onclick="toggleELL(this, 'ell-drop-3')">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                <div class="ell-level-num">3</div>
+                <span class="ell-toggle-icon">+</span>
+              </div>
+              <div class="ell-level-name">Expanding</div>
+              <div class="ell-level-desc">Needs support with academic vocabulary. Uses context clues to fill gaps.</div>
+              <span class="ell-tech-badge tech-mod">Tech Use: Moderate</span>
+              <span class="ell-expand-hint">↓ Tap for examples & tool guidance</span>
+              <div class="ell-dropdown" id="ell-drop-3">
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">What this looks like in class</span>
+                  Converses comfortably about daily topics. Struggles with subject-specific words like "hypothesis," "denominator," or "metaphor." May understand the task but write or speak in simpler English than expected for their grade.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">🎙️ Voice tool</span>
+                  Use selectively — for new academic vocabulary or complex explanations. Not needed for everyday classroom conversation.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">📄 Documents tool</span>
+                  Translate content-heavy materials like science worksheets, social studies readings, or assessment instructions. General activity sheets may no longer need translation.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">✉️ Emails tool</span>
+                  Translate family emails about academic progress, learning plans, or school events. Routine notices may be understood without translation.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">Non-tech tip</span>
+                  Pre-teach key vocabulary before a lesson. Provide a word wall or glossary. Pair this student with a bilingual peer when possible.
+                </div>
+              </div>
+            </div>
+
+            <div class="ell-scale-card" onclick="toggleELL(this, 'ell-drop-4')">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                <div class="ell-level-num">4</div>
+                <span class="ell-toggle-icon">+</span>
+              </div>
+              <div class="ell-level-name">Consolidating</div>
+              <div class="ell-level-desc">Proficient in conversation, but struggles with dense academic jargon and complex texts.</div>
+              <span class="ell-tech-badge tech-low">Tech Use: Low — simplify English</span>
+              <span class="ell-expand-hint">↓ Tap for examples & tool guidance</span>
+              <div class="ell-dropdown" id="ell-drop-4">
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">What this looks like in class</span>
+                  Sounds fluent in conversation — this can mask ongoing academic language gaps. May struggle with essay writing, inferential reading, or timed tests. Often mistaken for a fully proficient English speaker by new staff.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">🎙️ Voice tool</span>
+                  Rarely needed. Focus instead on simplifying your own language — shorter sentences, fewer idioms, direct vocabulary.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">📄 Documents tool</span>
+                  Only for highly complex or jargon-heavy documents. Most classroom materials can be accessed in English with vocabulary support.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">✉️ Emails tool</span>
+                  Family communication about IEPs, formal assessments, or sensitive topics may still benefit from translation. Routine school communication is likely fine in English.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">Non-tech tip</span>
+                  Do not assume this student "has it figured out." Check in regularly about comprehension. Provide extended time on written tasks and model academic language explicitly.
+                </div>
+              </div>
+            </div>
+
+            <div class="ell-scale-card" onclick="toggleELL(this, 'ell-drop-5')">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                <div class="ell-level-num">5</div>
+                <span class="ell-toggle-icon">+</span>
+              </div>
+              <div class="ell-level-name">Bridging</div>
+              <div class="ell-level-desc">Approaching grade-level proficiency. Minimal translation support required.</div>
+              <span class="ell-tech-badge tech-bridge">Approaching Grade Level</span>
+              <span class="ell-expand-hint">↓ Tap for examples & tool guidance</span>
+              <div class="ell-dropdown" id="ell-drop-5">
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">What this looks like in class</span>
+                  Participates fully in class discussions. Reads and writes close to grade level. May still have occasional gaps in idiomatic English or culturally specific references. Often formally exited from ELL services at this stage.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">🎙️ Voice tool</span>
+                  Not typically needed for the student. May still be useful for family conversations.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">📄 Documents tool</span>
+                  Not needed for classroom use. May be used for translating family-facing materials for home.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">✉️ Emails tool</span>
+                  Continue translating family communication — the student's English level does not reflect the family's. Many Level 5 students have parents who remain at Level 1 or 2 in English.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">Non-tech tip</span>
+                  Celebrate this student's achievement while recognising that fluency in conversation does not always mean full academic parity. Continue offering extended time and vocabulary support for complex writing tasks.
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- NON-TECH CHECKLIST -->
+        <div>
+          <p class="ell-section-title">Accessible Input Checklist — The Non-Tech Backup</p>
+          <div class="ell-checklist">
+
+            <div class="ell-check-item" onclick="toggleELL(this, 'check-drop-1')" style="cursor:pointer;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                <span class="ell-check-icon">🗣️</span>
+                <span class="ell-toggle-icon">+</span>
+              </div>
+              <div class="ell-check-title">Reduce Idioms</div>
+              <div class="ell-check-sub">Speak literally at all times</div>
+              <div class="ell-check-desc">Idioms and figures of speech are invisible walls for ELL students. Replace every expression with its plain, literal meaning.</div>
+              <div class="ell-check-example">
+                <span class="ex-bad">"That's a piece of cake."</span><br>
+                <span class="ex-good">"That is easy."</span>
+              </div>
+              <span class="ell-expand-hint">↓ Tap for real classroom scenarios</span>
+              <div class="ell-dropdown" id="check-drop-1">
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">Scenario 1 — Math class</span>
+                  You say: <em>"Let's take a stab at this problem."</em> A Level 1 student hears the word "stab" and looks confused or alarmed. Replace with: <strong>"Let's try this problem."</strong>
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">Scenario 2 — Giving encouragement</span>
+                  You say: <em>"You're on the right track!"</em> A Level 2 student looks around for a literal track. Replace with: <strong>"Good work. That answer is correct."</strong>
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">Scenario 3 — Transition instructions</span>
+                  You say: <em>"Wrap it up and hit the road."</em> Replace with: <strong>"Stop working. Pack your bag. Line up at the door."</strong>
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">Scenario 4 — Test expectations</span>
+                  You say: <em>"Give it your best shot."</em> Replace with: <strong>"Try every question. Do as much as you can."</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="ell-check-item" onclick="toggleELL(this, 'check-drop-2')" style="cursor:pointer;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                <span class="ell-check-icon">🧩</span>
+                <span class="ell-toggle-icon">+</span>
+              </div>
+              <div class="ell-check-title">Increase Realia</div>
+              <div class="ell-check-sub">Pair words with physical objects or gestures</div>
+              <div class="ell-check-desc">Anchor new vocabulary to something the student can see, hold, or watch you do. Reduces cognitive load at all proficiency levels.</div>
+              <div class="ell-check-example">
+                <span class="ex-good">Say "pencil" → hold up a pencil.<br>Say "open your book" → mime the action.</span>
+              </div>
+              <span class="ell-expand-hint">↓ Tap for real classroom scenarios</span>
+              <div class="ell-dropdown" id="check-drop-2">
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">Scenario 1 — Classroom supplies</span>
+                  Introducing school supplies to a new student: hold up each item as you name it. Say <strong>"scissors"</strong> while holding scissors open and closed. Say <strong>"glue"</strong> while miming applying glue to paper. No translation needed.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">Scenario 2 — Procedural instructions</span>
+                  Instead of saying "fold the paper in half," physically fold your own paper while narrating each step slowly. The student can mirror the action without needing to process English first.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">Scenario 3 — Calendar and time</span>
+                  Point to the physical calendar, tap today's date, hold up fingers for the number of days until an event. Pair with the word: <strong>"Friday. Five days."</strong>
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">Scenario 4 — Feelings check-in</span>
+                  Create a simple feelings chart with faces (happy, tired, sad, confused). Point to your own face and name the feeling. Student can point to the chart without speaking — giving you information and reducing their anxiety.
+                </div>
+              </div>
+            </div>
+
+            <div class="ell-check-item" onclick="toggleELL(this, 'check-drop-3')" style="cursor:pointer;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                <span class="ell-check-icon">⏱️</span>
+                <span class="ell-toggle-icon">+</span>
+              </div>
+              <div class="ell-check-title">Wait Time</div>
+              <div class="ell-check-sub">5-second silent pause after every question</div>
+              <div class="ell-check-desc">ELL students are processing in two languages simultaneously. A mandatory 5-second pause after asking a question gives the cognitive space needed to form a response.</div>
+              <div class="ell-check-example">
+                <span class="ex-good">Ask question → count silently to 5 → wait for response. Do not rephrase or redirect before 5 seconds.</span>
+              </div>
+              <span class="ell-expand-hint">↓ Tap for real classroom scenarios</span>
+              <div class="ell-dropdown" id="check-drop-3">
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">Scenario 1 — Whole-class question</span>
+                  You ask: "What do plants need to grow?" Immediately 10 hands go up. Wait 5 full seconds before taking any answer. This gives ELL students — who are still translating the question — the chance to formulate a response before the moment passes.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">Scenario 2 — One-on-one check-in</span>
+                  You ask a Level 2 student: "Do you understand?" They look at you blankly. The instinct is to rephrase immediately — resist it. Count silently to 5. The student is often processing and will nod or respond if given the moment.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">Scenario 3 — Misread as not knowing</span>
+                  A Level 3 student is called on and goes silent. Other students start calling out answers. This silence is often processing time, not ignorance. Gently hold the class and say: <strong>"We'll wait."</strong> The student frequently answers correctly given 5 seconds.
+                </div>
+                <div class="ell-dropdown-item">
+                  <span class="ell-dropdown-label">Scenario 4 — Using the Voice tool</span>
+                  After using Google Translate Voice to explain a task, pause before asking if the student understood. The student has just heard a message in their language for the first time — give them a moment to process before expecting a verbal response.
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="ell-note">
+          <strong style="display:block;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:14px;">How to use this with the translation tools</strong>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+            <div style="background:rgba(27,36,102,0.08);padding:12px 14px;border-left:4px solid var(--navy);">
+              <div style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;color:var(--navy);margin-bottom:6px;">Levels 1–2</div>
+              <div style="font-size:12px;color:var(--navy);line-height:1.6;">Use the <strong>Voice</strong> and <strong>Documents</strong> tools actively for most classroom communication. Translation support is essential at this stage.</div>
+            </div>
+            <div style="background:rgba(27,36,102,0.08);padding:12px 14px;border-left:4px solid var(--navy);">
+              <div style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;color:var(--navy);margin-bottom:6px;">Level 3</div>
+              <div style="font-size:12px;color:var(--navy);line-height:1.6;">Shift toward <strong>scaffolded English</strong> with translation as a backup. Use tools for complex or subject-specific materials, not everyday communication.</div>
+            </div>
+            <div style="background:rgba(27,36,102,0.08);padding:12px 14px;border-left:4px solid var(--navy);">
+              <div style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;color:var(--navy);margin-bottom:6px;">Levels 4–5</div>
+              <div style="font-size:12px;color:var(--navy);line-height:1.6;">Prioritise <strong>plain-language simplification</strong> over translation. Reserve the tools for <strong>family communication</strong> rather than in-class use.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- FOOTER: AI DISCLOSURE + CREDITS -->
+<footer style="background:var(--navy);padding:0;">
+
+  <!-- AI Disclosure accordion -->
+  <div style="border-top:3px solid var(--yellow);">
+    <button id="ai-toggle-btn" onclick="toggleAI()" style="width:100%;background:var(--navy);border:none;padding:18px 48px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;text-align:left;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-size:12px;font-weight:700;color:var(--yellow);letter-spacing:0.1em;text-transform:uppercase;">AI Use Disclosure</span>
+        <span style="font-size:12px;color:rgba(255,255,255,0.4);font-weight:400;">— How this dashboard was built</span>
+      </div>
+      <span class="toggle-icon" style="font-size:20px;font-weight:900;color:var(--yellow);line-height:1;">+</span>
+    </button>
+
+    <div id="ai-disclosure-content" style="display:none;padding:0 48px 32px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;padding-top:8px;">
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">What AI was used for</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;gap:10px;"><span style="color:var(--yellow);font-weight:900;flex-shrink:0;">✓</span><span style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.6;"><strong style="color:white;">Code writing</strong> — Basic coding knowledge was not enough to build the full vision. AI translated design ideas into working HTML, CSS, and JavaScript.</span></div>
+            <div style="display:flex;gap:10px;"><span style="color:var(--yellow);font-weight:900;flex-shrink:0;">✓</span><span style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.6;"><strong style="color:white;">Language simplification</strong> — AI rewrote technical instructions into plain language accessible to educators of all digital comfort levels.</span></div>
+            <div style="display:flex;gap:10px;"><span style="color:var(--yellow);font-weight:900;flex-shrink:0;">✓</span><span style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.6;"><strong style="color:white;">Content structuring</strong> — AI helped organise field-test findings into scannable, logical step-by-step instructions.</span></div>
+            <div style="display:flex;gap:10px;"><span style="color:var(--yellow);font-weight:900;flex-shrink:0;">✓</span><span style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.6;"><strong style="color:white;">Translation verification</strong> — AI assisted in verifying greetings in multiple languages, including Cree and Inuktitut.</span></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">What AI did NOT do</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;gap:10px;"><span style="color:rgba(255,255,255,0.4);font-weight:900;flex-shrink:0;">✕</span><span style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.6;">Decide the purpose or audience — the focus on ELL family communication was an original pedagogical decision.</span></div>
+            <div style="display:flex;gap:10px;"><span style="color:rgba(255,255,255,0.4);font-weight:900;flex-shrink:0;">✕</span><span style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.6;">Choose which tools to feature — Google Translate and DeepL were selected from real-world classroom field-testing.</span></div>
+            <div style="display:flex;gap:10px;"><span style="color:rgba(255,255,255,0.4);font-weight:900;flex-shrink:0;">✕</span><span style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.6;">Identify the troubleshooting failures — the bottlenecks were discovered through hands-on testing, not AI suggestion.</span></div>
+            <div style="display:flex;gap:10px;"><span style="color:rgba(255,255,255,0.4);font-weight:900;flex-shrink:0;">✕</span><span style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.6;">Choose to include Indigenous languages — that decision reflects a commitment to reconciliation and cultural respect.</span></div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:20px;padding:16px 20px;background:rgba(255,255,255,0.06);border-left:3px solid var(--yellow);font-size:13px;color:rgba(255,255,255,0.8);line-height:1.7;">
+        Every meaningful decision in this dashboard was made by a human educator. AI was a capable tool that helped bring that vision to life — the same way a hammer helps a carpenter build a house. The carpenter still designs the house.
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom footer bar -->
+  <div style="padding:16px 48px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,0.1);">
+    <span style="font-size:12px;color:rgba(255,255,255,0.45);">An Ampere educator resource — <a href="https://amp.ca" target="_blank" style="color:rgba(255,255,255,0.45);">amp.ca</a> &nbsp;·&nbsp; All tools are free and require zero account creation.</span>
+  </div>
+
+</footer>
+
+<script>
+  // ── SIDEBAR & NAV REFS ──
+  const sidebarBtns = document.querySelectorAll('.sidebar-btn');
+  const navTabs = document.querySelectorAll('.nav-tab');
+
+  function toggleDrawer() {
+    document.getElementById('mobile-drawer').classList.toggle('open');
+  }
+
+  function closeDrawer(btn) {
+    document.getElementById('mobile-drawer').classList.remove('open');
+    document.querySelectorAll('.mobile-nav-item').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function showPanel(id, navBtn, sidebarBtn) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+
+    // Always sync nav tabs
+    navTabs.forEach(t => {
+      t.classList.remove('active');
+      if (t.getAttribute('onclick') && t.getAttribute('onclick').includes("'" + id + "'")) t.classList.add('active');
+    });
+    if (navBtn) navBtn.classList.add('active');
+
+    // Always sync sidebar
+    sidebarBtns.forEach(b => {
+      b.classList.remove('active');
+      if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + id + "'")) b.classList.add('active');
+    });
+    if (sidebarBtn) sidebarBtn.classList.add('active');
+  }
+
+  function focusCard(index) {
+    setTimeout(() => {
+      const card = document.getElementById('card-' + index);
+      if (card) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        card.classList.add('active');
+        setTimeout(() => card.classList.remove('active'), 1800);
+      }
+    }, 50);
+  }
+
+  // ── ELL DROPDOWN ──
+  function toggleELL(card, dropId) {
+    const drop = document.getElementById(dropId);
+    const isOpen = drop.classList.contains('open');
+    // Close all others
+    document.querySelectorAll('.ell-dropdown').forEach(d => d.classList.remove('open'));
+    document.querySelectorAll('.ell-scale-card').forEach(c => c.classList.remove('open'));
+    if (!isOpen) {
+      drop.classList.add('open');
+      card.classList.add('open');
+    }
+  }
+
+  // ── AI DISCLOSURE ACCORDION ──
+  function toggleAI() {
+    const content = document.getElementById('ai-disclosure-content');
+    const icon = document.querySelector('.toggle-icon');
+    const isOpen = content.style.display === 'block';
+    content.style.display = isOpen ? 'none' : 'block';
+    icon.textContent = isOpen ? '+' : '−';
+  }
+
+  // ── TROUBLESHOOTING EXPAND ──
+  function toggleFix(id, row) {
+    const fix = document.getElementById(id);
+    const isOpen = fix.classList.contains('open');
+    document.querySelectorAll('.fix-row').forEach(f => f.classList.remove('open'));
+    document.querySelectorAll('.matrix-row').forEach(r => r.classList.remove('open'));
+    if (!isOpen) {
+      fix.classList.add('open');
+      row.classList.add('open');
+    }
+  }
+
+  // ── ROTATING GREETING ──
+  const greetings = [
+    { text: 'Good morning',       lang: 'English'    },
+    { text: 'Bonjour',            lang: 'French'     },
+    { text: 'Buenos días',        lang: 'Spanish'    },
+    { text: 'Chào buổi sáng',    lang: 'Vietnamese' },
+    { text: '좋은 아침이에요',      lang: 'Korean'     },
+    { text: '早上好',              lang: 'Mandarin'   },
+    { text: 'Günaydın',          lang: 'Turkish'    },
+    { text: 'Доброе утро',        lang: 'Russian'    },
+    { text: 'صباح الخير',         lang: 'Arabic'     },
+    { text: 'Selamat pagi',       lang: 'Malay'      },
+    { text: 'Suprabhat',          lang: 'Hindi'      },
+    { text: 'Kalimera',           lang: 'Greek'      },
+    { text: 'Magandang umaga',    lang: 'Filipino'   },
+    { text: 'Доброго ранку',      lang: 'Ukrainian'  },
+    { text: 'Bom dia',            lang: 'Portuguese' },
+    { text: 'Guten Morgen',       lang: 'German'     },
+    { text: 'Buongiorno',         lang: 'Italian'    },
+    { text: 'ਸਤ ਸ੍ਰੀ ਅਕਾਲ',       lang: 'Punjabi'    },
+    { text: 'Sawubona',           lang: 'Zulu'       },
+    { text: 'おはようございます',    lang: 'Japanese'   },
+    { text: 'Wâpan mîna',        lang: 'Cree (Plains)'    },
+    { text: 'ᐙᐸᓐ ᒦᓇ',            lang: 'Cree (Syllabics)' },
+    { text: 'Ublaami',           lang: 'Inuktitut'         },
+    { text: 'ᐅᒻᓚᐊᒥ',             lang: 'Inuktitut (Syllabics)' },
+  ];
+  let greetingIndex = 0;
+  let greetingEl, greetingLangEl, greetingWrap;
+
+  function initGreeting() {
+    greetingEl     = document.getElementById('greeting-text');
+    greetingLangEl = document.getElementById('greeting-lang');
+    greetingWrap   = document.getElementById('greeting-display');
+    if (greetingEl && greetingLangEl && greetingWrap) {
+      setInterval(rotateGreeting, 3000);
+    }
+  }
+
+  function rotateGreeting() {
+    greetingWrap.style.opacity = '0';
+    setTimeout(() => {
+      greetingIndex = (greetingIndex + 1) % greetings.length;
+      greetingEl.textContent     = greetings[greetingIndex].text;
+      greetingLangEl.textContent = greetings[greetingIndex].lang;
+      greetingWrap.style.opacity = '1';
+    }, 300);
+  }
+
+  document.addEventListener('DOMContentLoaded', initGreeting);
+</script>
+<!-- EMBEDDED CHEAT SHEET — shown only when printing -->
+<div id="cheatsheet-embed">
+  <div style="font-size:11px;font-weight:700;color:#888;letter-spacing:0.1em;text-transform:uppercase;text-align:right;padding:8px 12px 4px;font-family:'Inter',sans-serif;">✂ Cut here</div>
+  <div class="cs-page">
+    <div class="cs-header">
+      <div><div class="cs-logo">Ampere</div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;">amp.ca · Educator Resource</div></div>
+      <div class="cs-title">Translation Tools — Desk Cheat Sheet<br><span style="font-size:11px;font-weight:400;opacity:0.6;">Keep this beside your computer. You cannot break anything by trying.</span></div>
+    </div>
+    <div class="cs-reassure">
+      <span style="font-size:20px;flex-shrink:0;">✅</span>
+      <div class="cs-reassure-text"><strong>You are safe to try these tools.</strong> They will NOT delete or change your original files. The only rule: replace the student's name with <strong>[Student]</strong> before translating.</div>
+    </div>
+    <div class="cs-tools">
+      <div class="cs-col">
+        <div style="background:#5B5EA6;padding:6px 10px;margin:-16px -16px 12px;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#F5C400;">🎙️ Use Case: Talking with a student at your desk</div>
+        <div class="cs-num">01</div>
+        <div class="cs-tool-name">Talk with your student</div>
+        <span class="cs-url">translate.google.com</span>
+        <div class="cs-step"><span class="cs-sn">1</span><span>Open Google Translate. Set <strong>left</strong> to English, <strong>right</strong> to student's language.</span></div>
+        <div class="cs-step"><span class="cs-sn">2</span><span>Click the 🎙️ on the left. Speak in English. Translation appears on screen.</span></div>
+        <div class="cs-step"><span class="cs-sn">3</span><span>Press <strong>⇄ Swap</strong>. Student clicks mic and speaks back. Read their words in English on the left.</span></div>
+        <div class="cs-warn-y"><span class="cs-warn-label">⚠ Mic greyed out?</span>IT system block — not a website error. Contact IT: System Settings → Privacy → Microphone.</div>
+      </div>
+      <div class="cs-col">
+        <div style="background:#5B5EA6;padding:6px 10px;margin:-16px -16px 12px;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#F5C400;">📄 Use Case: Sending worksheets or forms home</div>
+        <div class="cs-num">02</div>
+        <div class="cs-tool-name">Translate a document</div>
+        <span class="cs-url">translate.google.com/?op=docs</span>
+        <div class="cs-step"><span class="cs-sn">1</span><span>Go to the site. Click the <strong>Documents</strong> tab.</span></div>
+        <div class="cs-step"><span class="cs-sn">2</span><span>Click the upload box. Choose your PDF or Word file (under 10 MB).</span></div>
+        <div class="cs-step"><span class="cs-sn">3</span><span>Set languages. Click <strong>Translate</strong>. Download as <strong>.docx</strong> (not PDF). Read before sharing.</span></div>
+        <div class="cs-warn-y"><span class="cs-warn-label">⚠ Two things to watch</span>Files over 10 MB won't upload. Translation errors happen — always read the .docx before distributing.</div>
+      </div>
+      <div class="cs-col">
+        <div style="background:#5B5EA6;padding:6px 10px;margin:-16px -16px 12px;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#F5C400;">✉️ Use Case: Writing an email to a family</div>
+        <div class="cs-num">03</div>
+        <div class="cs-tool-name">Write home to families</div>
+        <span class="cs-url">deepl.com/translator</span>
+        <div class="cs-step"><span class="cs-sn">1</span><span>Write email normally. <strong>Do not send yet.</strong></span></div>
+        <div class="cs-step"><span class="cs-sn">2</span><span>Replace student's real name with <strong>[Student]</strong>. Remove medical/IEP details.</span></div>
+        <div class="cs-step"><span class="cs-sn">3</span><span>Paste safe version into DeepL. Translate. Copy result. Paste into school email. Retype real name. Send.</span></div>
+        <div class="cs-warn-n"><span class="cs-warn-label" style="color:#F5C400;">✗ Privacy rule</span>Never paste real names into DeepL. Always redact first.</div>
+      </div>
+    </div>
+    <div style="background:#1B2466;padding:6px 24px;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#F5C400;">✗ Privacy Protocol — Required every time you use Tool 03</div>
+    <div class="cs-privacy">
+      <div class="cs-ps"><div class="cs-ps-num">1</div><div class="cs-ps-title">Write normally</div><div class="cs-ps-desc">Write your message in school email as normal.</div></div>
+      <div class="cs-ps"><div class="cs-ps-num">2</div><div class="cs-ps-title">Erase the name</div><div class="cs-ps-desc">Replace student's real name with [Student].</div><div class="cs-ps-ex"><s style="color:#a0001a;">Marcus</s> → <strong>[Student]</strong></div></div>
+      <div class="cs-ps"><div class="cs-ps-num">3</div><div class="cs-ps-title">Translate</div><div class="cs-ps-desc">Paste safe version into DeepL. Translate. Copy result.</div></div>
+      <div class="cs-ps"><div class="cs-ps-num">4</div><div class="cs-ps-title">Retype & send</div><div class="cs-ps-desc">Paste into school email. Type real name back. Send.</div></div>
+    </div>
+    <div class="cs-footer">
+      <span class="cs-footer-l">All tools are free · No accounts needed · Files are not changed · amp.ca</span>
+      <span class="cs-footer-r">You cannot break anything by trying. ✓</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  function printCheatSheet() {
+    document.getElementById('cheatsheet-embed').style.display = 'block';
+    window.print();
+    setTimeout(() => { document.getElementById('cheatsheet-embed').style.display = 'none'; }, 1000);
+  }
+</script>
+</body>
+</html>
