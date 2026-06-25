@@ -1710,12 +1710,14 @@
       <div style="padding:32px 48px;background:#f8f8fb;border-bottom:1px solid #e8e8ee;">
         <div style="border:2px solid var(--navy);background:var(--white);">
 
-          <!-- SIM HEADER -->
-          <div style="background:var(--navy);padding:20px 28px;">
+          <!-- SIM HEADER — accordion toggle -->
+          <button onclick="toggleSim()" style="width:100%;background:var(--navy);padding:20px 28px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;text-align:left;">
             <div style="font-size:18px;font-weight:900;color:var(--white);line-height:1.2;">Try it yourself — what your student reads every day</div>
-          </div>
+            <span id="sim-toggle-icon" style="font-size:22px;color:var(--yellow);flex-shrink:0;transition:transform 0.2s;">+</span>
+          </button>
 
-          <!-- SIM BODY -->
+          <!-- SIM BODY — hidden by default -->
+          <div id="sim-accordion-body" style="display:none;">
           <div style="padding:28px 28px;">
         <div style="background:#f5f5fa;padding:24px;border:1.5px solid #e0e0e8;">
 
@@ -1821,6 +1823,7 @@
 
           </div><!-- end sim body -->
         </div><!-- end sim padding -->
+        </div><!-- end sim accordion body -->
         </div><!-- end navy border card -->
       </div><!-- end sim section padding -->
 
@@ -1828,11 +1831,14 @@
       <div style="padding:32px 48px;background:#f8f8fb;border-bottom:1px solid #e8e8ee;">
         <div style="border:2px solid var(--purple);background:var(--white);">
 
-          <!-- COMP HEADER -->
-          <div style="background:var(--purple);padding:20px 28px;">
+          <!-- COMP HEADER — accordion toggle -->
+          <button onclick="toggleComp()" style="width:100%;background:var(--purple);padding:20px 28px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;text-align:left;">
             <div style="font-size:18px;font-weight:900;color:var(--white);line-height:1.2;">Drag the slider — watch the words disappear</div>
-          </div>
+            <span id="comp-toggle-icon" style="font-size:22px;color:var(--yellow);flex-shrink:0;transition:transform 0.2s;">+</span>
+          </button>
 
+          <!-- COMP BODY — hidden by default -->
+          <div id="comp-accordion-body" style="display:none;">
           <!-- COMP BODY -->
           <div style="padding:28px 28px;">
         <div style="background:#f5f5fa;padding:24px;border:1.5px solid #e0e0e8;">
@@ -1850,6 +1856,7 @@
           </div>
         </div>
           </div><!-- end comp body -->
+          </div><!-- end comp accordion body -->
         </div><!-- end purple border card -->
       </div><!-- end comp section padding -->
 
@@ -2183,6 +2190,12 @@
           </div>
         </div>
 
+        <!-- WHAT THIS DASHBOARD IS NOT -->
+        <div style="background:#f5f5fa;border-left:4px solid var(--yellow);padding:20px 24px;">
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--navy);margin-bottom:10px;">What this dashboard is not</div>
+          <div style="font-size:14px;color:var(--navy);line-height:1.7;">These tools are communication bridges, and it is worth being honest about what that means. They are not substitutes for human interpreters, professional translation services, or your district's ELL support team. For IEP meetings, disciplinary matters, medical disclosures, or any conversation where precision and nuance are critical, always request a qualified interpreter. This dashboard exists for the daily communication that would otherwise go unaddressed, not because there wasn't a better option, but because there was no practical option at all.</div>
+        </div>
+
         <!-- TOOL 01 -->
         <div style="border:2px solid #e0e0e8;">
           <div style="background:var(--purple);padding:16px 24px;">
@@ -2249,13 +2262,6 @@
           </div>
         </div>
 
-        <!-- WHAT THIS DASHBOARD IS NOT -->
-        <div style="background:#f5f5fa;border-left:4px solid var(--yellow);padding:20px 24px;">
-          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--navy);margin-bottom:10px;">What this dashboard is not</div>
-          <div style="font-size:14px;color:var(--navy);line-height:1.7;">These tools are communication bridges, and it is worth being honest about what that means. They are not substitutes for human interpreters, professional translation services, or your district's ELL support team. For IEP meetings, disciplinary matters, medical disclosures, or any conversation where precision and nuance are critical, always request a qualified interpreter. This dashboard exists for the daily communication that would otherwise go unaddressed, not because there wasn't a better option, but because there was no practical option at all.</div>
-        </div>
-
-      </div>
     </div>
 
   </main>
@@ -2754,6 +2760,25 @@
     const isOpen = content.style.display === 'block';
     content.style.display = isOpen ? 'none' : 'block';
     icon.textContent = isOpen ? '+' : '−';
+  }
+
+  // ── SIMULATION ACCORDIONS ──
+  function toggleSim() {
+    const body = document.getElementById('sim-accordion-body');
+    const icon = document.getElementById('sim-toggle-icon');
+    const isOpen = body.style.display === 'block';
+    body.style.display = isOpen ? 'none' : 'block';
+    icon.textContent = isOpen ? '+' : '−';
+  }
+
+  function toggleComp() {
+    const body = document.getElementById('comp-accordion-body');
+    const icon = document.getElementById('comp-toggle-icon');
+    const isOpen = body.style.display === 'block';
+    body.style.display = isOpen ? 'none' : 'block';
+    icon.textContent = isOpen ? '+' : '−';
+    // Initialise slider on first open
+    if (!isOpen) updateComp(document.getElementById('comp-slider').value);
   }
 
   // ── TROUBLESHOOTING EXPAND ──
